@@ -20,17 +20,17 @@ public final class VectorThrusterRenderer {
     private static final float PIVOT_Z = 1.0f / 16.0f;
 
     // Flap pivot points in block-local 0..1 space (matching model coords / 16)
-    private static final float FLAP_PIVOT_TOP_X    =  8.0f / 16.0f;
-    private static final float FLAP_PIVOT_TOP_Y    = 13.0f / 16.0f;
-    private static final float FLAP_PIVOT_BOTTOM_Y =  3.0f / 16.0f;
-    private static final float FLAP_PIVOT_LEFT_X   =  3.0f / 16.0f;
-    private static final float FLAP_PIVOT_RIGHT_X  = 13.0f / 16.0f;
-    private static final float FLAP_PIVOT_SIDE_Y   =  8.0f / 16.0f;
-    private static final float FLAP_PIVOT_Z        = 12.0f / 16.0f;
+    private static final float FLAP_PIVOT_TOP_X = 8.0f / 16.0f;
+    private static final float FLAP_PIVOT_TOP_Y = 13.0f / 16.0f;
+    private static final float FLAP_PIVOT_BOTTOM_Y = 3.0f / 16.0f;
+    private static final float FLAP_PIVOT_LEFT_X = 3.0f / 16.0f;
+    private static final float FLAP_PIVOT_RIGHT_X = 13.0f / 16.0f;
+    private static final float FLAP_PIVOT_SIDE_Y = 8.0f / 16.0f;
+    private static final float FLAP_PIVOT_Z = 12.0f / 16.0f;
 
     // Idle = ±22.5°, full throttle = ±12.5°; delta = 10°
-    private static final float FLAP_ANGLE_IDLE     = 22.5f;
-    private static final float FLAP_ANGLE_DELTA    = 30.0f;
+    private static final float FLAP_ANGLE_IDLE = 22.5f;
+    private static final float FLAP_ANGLE_DELTA = 30.0f;
 
     private VectorThrusterRenderer() {
     }
@@ -58,10 +58,10 @@ public final class VectorThrusterRenderer {
         PartialModel bodyModel = creative
                 ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_BODY
                 : PropulsionPartialModels.VECTOR_THRUSTER_BODY;
-        PartialModel flapTop    = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_TOP    : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_TOP;
+        PartialModel flapTop = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_TOP : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_TOP;
         PartialModel flapBottom = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_BOTTOM : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_BOTTOM;
-        PartialModel flapLeft   = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_LEFT   : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_LEFT;
-        PartialModel flapRight  = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_RIGHT  : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_RIGHT;
+        PartialModel flapLeft = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_LEFT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_LEFT;
+        PartialModel flapRight = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_RIGHT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_RIGHT;
 
         VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
 
@@ -79,6 +79,14 @@ public final class VectorThrusterRenderer {
 
         // Render static body parts (exhaust, base, connector)
         CachedBuffers.partial(bodyModel, state).light(light).overlay(overlay).renderInto(ms, vb);
+
+        // Render flame
+        ms.pushPose();
+        float throttle = be.getThrottle();
+        ms.translate(8.0f / 16.0f, 8.0f / 16.0f, 10.0f / 16.0f);
+        ms.scale(0.5f, 0.5f, throttle);
+        CachedBuffers.partial(PropulsionPartialModels.THRUSTER_FLAME, state).light(light).overlay(overlay).renderInto(ms, vb);
+        ms.popPose();
 
         // Top flap: -flapAngle around X at (8/16, 13/16, 12/16)
         renderFlap(ms, vb, state, flapTop, light, overlay,
@@ -117,12 +125,13 @@ public final class VectorThrusterRenderer {
 
     private static void applyFacingRotation(PoseStack ms, Direction facing) {
         switch (facing) {
-            case NORTH -> {}
+            case NORTH -> {
+            }
             case SOUTH -> ms.mulPose(Axis.YP.rotationDegrees(-180));
-            case WEST  -> ms.mulPose(Axis.YP.rotationDegrees(-270));
-            case EAST  -> ms.mulPose(Axis.YP.rotationDegrees(-90));
-            case UP    -> ms.mulPose(Axis.XP.rotationDegrees(-270));
-            case DOWN  -> ms.mulPose(Axis.XP.rotationDegrees(-90));
+            case WEST -> ms.mulPose(Axis.YP.rotationDegrees(-270));
+            case EAST -> ms.mulPose(Axis.YP.rotationDegrees(-90));
+            case UP -> ms.mulPose(Axis.XP.rotationDegrees(-270));
+            case DOWN -> ms.mulPose(Axis.XP.rotationDegrees(-90));
         }
     }
 }

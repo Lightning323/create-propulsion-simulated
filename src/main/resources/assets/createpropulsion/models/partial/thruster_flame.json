@@ -1,0 +1,8 @@
+{
+	"loader": "neoforge:obj",
+	"model": "createpropulsion:models/block/thruster_flame.obj",
+	"automatic_culling": false,
+	"textures": {
+		"m_36290a92-aca5-b71f-0180-1c2c0705defa": "createpropulsion:block/flame"
+	}
+}
