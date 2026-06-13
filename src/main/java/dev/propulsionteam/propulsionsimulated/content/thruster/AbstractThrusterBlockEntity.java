@@ -618,8 +618,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
-            .mul(getParticleVelocity() * emissionScale * particleVelocityMultiplier)
-            .add(additionalVel);
+                .mul(getParticleVelocity() * emissionScale * particleVelocityMultiplier)
+                .add(additionalVel);
 
         // Enough particles each tick so spacing along the velocity vector stays near TARGET_PARTICLE_SPACING_BLOCKS (no fractional carry → no skipped ticks).
         double speedPerTick = particleVelocity.length();
@@ -641,34 +641,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             double spawnY = nozzleY + particleVelocity.y * frac;
             double spawnZ = nozzleZ + particleVelocity.z * frac;
 
-            if (level instanceof ServerLevel serverLevel) {
-                double maxDistSq = getParticleBroadcastRange() * getParticleBroadcastRange();
-                for (ServerPlayer player : serverLevel.players()) {
-                    if (player.distanceToSqr(spawnX, spawnY, spawnZ) > maxDistSq) {
-                        continue;
-                    }
-                    serverLevel.sendParticles(
-                        player,
-                        particleData,
-                        true,
-                        spawnX, spawnY, spawnZ,
-                        0,
-                        particleVelocity.x, particleVelocity.y, particleVelocity.z,
-                        1.0
-                    );
-                }
-            } else {
-                level.addParticle(
-                    particleData,
-                    true,
-                    spawnX, spawnY, spawnZ,
-                    particleVelocity.x, particleVelocity.y, particleVelocity.z
-                );
-            }
+            emitParticle(spawnX, spawnY, spawnZ, particleVelocity, particleData);
         }
     }
 
-    private void emitParticle(double spawnX, double spawnY, double spawnZ, Vector3d particleVelocity, ParticleOptions particleData) {
+    protected void emitParticle(double spawnX, double spawnY, double spawnZ, Vector3d particleVelocity,  ParticleOptions particleData) {
         if (level instanceof ServerLevel serverLevel) {
             double maxDistSq = getParticleBroadcastRange() * getParticleBroadcastRange();
             for (ServerPlayer player : serverLevel.players()) {

@@ -31,6 +31,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import dev.ryanhcode.sable.Sable;
+import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -359,7 +360,8 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     BlockPos pos = origin.offset(x, y, z);
                     BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level, pos);
                     if (!state.is(expectedBlock)) return false;
-                    if (!state.hasProperty(AbstractThrusterBlock.FACING) || state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
+                    if (!state.hasProperty(AbstractThrusterBlock.FACING) || state.getValue(AbstractThrusterBlock.FACING) != facing)
+                        return false;
                     BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof CreativeThrusterBlockEntity t)) return false;
                     CreativeThrusterBlockEntity ctrl = t.getControllerBE();
@@ -436,9 +438,9 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
         Vec3 localExhaustDirection = new Vec3(exhaustDirection.getStepX(), exhaustDirection.getStepY(), exhaustDirection.getStepZ());
         double half = width * 0.5d;
         Vec3 localCubeCenter = new Vec3(
-            worldPosition.getX() + half,
-            worldPosition.getY() + half,
-            worldPosition.getZ() + half
+                worldPosition.getX() + half,
+                worldPosition.getY() + half,
+                worldPosition.getZ() + half
         );
         return localCubeCenter.add(localExhaustDirection.scale(half + 0.45d));
     }
@@ -473,7 +475,8 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
         double particleVelocityMultiplier = org.joml.Math.clamp(0.0d, PARTICLE_MULTIPLIER_CAP, getParticleVelocityMultiplier());
 
         float velocityScale = width == 2 ? 1.15f : 1.3f;
-        Vec3 particleVelocity = worldExhaustDirection.scale(4.0f * emissionScale * velocityScale * particleVelocityMultiplier);
+        Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
+                .mul(4.0f * emissionScale * velocityScale * particleVelocityMultiplier);
         ParticleOptions particleData = createParticleOptions();
 
         double speedPerTick = particleVelocity.length();
@@ -491,27 +494,10 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 case Z -> oz = 0.0;
             }
             double beamFrac = particlesToSpawn <= 1 ? 0.0 : (double) i / (double) particlesToSpawn;
-            if (level instanceof ServerLevel serverLevel) {
-                double px = worldNozzlePosition.x + ox + particleVelocity.x * beamFrac;
-                double py = worldNozzlePosition.y + oy + particleVelocity.y * beamFrac;
-                double pz = worldNozzlePosition.z + oz + particleVelocity.z * beamFrac;
-                double maxDistSq = PARTICLE_BROADCAST_RANGE_BLOCKS * PARTICLE_BROADCAST_RANGE_BLOCKS;
-                for (ServerPlayer player : serverLevel.players()) {
-                    if (player.distanceToSqr(px, py, pz) > maxDistSq) continue;
-                    serverLevel.sendParticles(player, particleData, true, px, py, pz, 0, particleVelocity.x, particleVelocity.y, particleVelocity.z, 1.0);
-                }
-            } else {
-                level.addParticle(
-                    particleData,
-                    true,
-                    worldNozzlePosition.x + ox + particleVelocity.x * beamFrac,
-                    worldNozzlePosition.y + oy + particleVelocity.y * beamFrac,
-                    worldNozzlePosition.z + oz + particleVelocity.z * beamFrac,
-                    particleVelocity.x,
-                    particleVelocity.y,
-                    particleVelocity.z
-                );
-            }
+            double px = worldNozzlePosition.x + ox + particleVelocity.x * beamFrac;
+            double py = worldNozzlePosition.y + oy + particleVelocity.y * beamFrac;
+            double pz = worldNozzlePosition.z + oz + particleVelocity.z * beamFrac;
+            emitParticle(px, py, pz, particleVelocity, particleData);
         }
     }
 

@@ -819,41 +819,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 case Z -> oz = 0.0;
             }
             double beamFrac = particlesToSpawn <= 1 ? 0.0 : (double) i / (double) particlesToSpawn;
-            if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-                double px = worldNozzlePosition.x + ox + particleVelocity.x * beamFrac;
-                double py = worldNozzlePosition.y + oy + particleVelocity.y * beamFrac;
-                double pz = worldNozzlePosition.z + oz + particleVelocity.z * beamFrac;
-                double maxDistSq = PARTICLE_BROADCAST_RANGE_BLOCKS * PARTICLE_BROADCAST_RANGE_BLOCKS;
-                for (ServerPlayer player : serverLevel.players()) {
-                    if (player.distanceToSqr(px, py, pz) > maxDistSq) {
-                        continue;
-                    }
-                    serverLevel.sendParticles(
-                            player,
-                            particleData,
-                            true,
-                            px,
-                            py,
-                            pz,
-                            0,
-                            particleVelocity.x,
-                            particleVelocity.y,
-                            particleVelocity.z,
-                            1.0
-                    );
-                }
-            } else {
-                level.addParticle(
-                        particleData,
-                        true,
-                        worldNozzlePosition.x + ox + particleVelocity.x * beamFrac,
-                        worldNozzlePosition.y + oy + particleVelocity.y * beamFrac,
-                        worldNozzlePosition.z + oz + particleVelocity.z * beamFrac,
-                        particleVelocity.x,
-                        particleVelocity.y,
-                        particleVelocity.z
-                );
-            }
+            double px = worldNozzlePosition.x + ox + particleVelocity.x * beamFrac;
+            double py = worldNozzlePosition.y + oy + particleVelocity.y * beamFrac;
+            double pz = worldNozzlePosition.z + oz + particleVelocity.z * beamFrac;
+            emitParticle(px, py, pz, particleVelocity, particleData);
         }
     }
 
