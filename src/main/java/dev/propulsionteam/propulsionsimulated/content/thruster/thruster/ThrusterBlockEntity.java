@@ -4,11 +4,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
-import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
-import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
-import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterParticleType;
+import dev.propulsionteam.propulsionsimulated.content.thruster.*;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
@@ -36,9 +32,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import dev.ryanhcode.sable.Sable;
 import dev.propulsionteam.propulsionsimulated.utility.math.MathUtility;
-import dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter;
 
 public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public static final int BASE_MAX_THRUST = 600000;
@@ -72,7 +68,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         tank = SmartFluidTankBehaviour.single(this, getBaseTankCapacityMb());
         behaviours.add(tank);
         tank.getPrimaryHandler().setValidator(stack -> ThrusterFuelManager.getProperties(stack.getFluid()) != null);
-        
+
         if (supportsMultiblock()) {
             oxidizerTank = SmartFluidTankBehaviour.single(this, getBaseTankCapacityMb());
             behaviours.add(oxidizerTank);
@@ -87,6 +83,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public boolean isController() {
         return controllerPos == null;
     }
+
 
     @Override
     public String getDyeId() {
@@ -114,7 +111,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Nullable
     public ThrusterBlockEntity getControllerBE() {
         if (isController() || !hasLevel()) return this;
-        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,controllerPos);
+        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, controllerPos);
         return be instanceof ThrusterBlockEntity t ? t : null;
     }
 
@@ -182,11 +179,11 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level,pos);
+                    BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level, pos);
                     if (!state.is(expectedBlock)) return false;
                     if (!state.hasProperty(AbstractThrusterBlock.FACING)) return false;
                     if (state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return false;
                     if (expectedType == null) {
                         expectedType = t.getClass();
@@ -207,7 +204,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,origin.offset(x, y, z));
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t && t.isMultiblock()) {
                         ThrusterBlockEntity ctrl = t.getControllerBE();
                         if (ctrl != null) ctrl.disassembleMulti();
@@ -223,7 +220,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return;
                     members.add(t);
                     if (pos.equals(origin)) controller = t;
@@ -247,9 +244,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             t.width = size;
             t.isThrustDirty = true;
             BlockPos cellPos = t.getBlockPos();
-            BlockState liveState = SimulatedThrustAdapter.getBlockStateSafe(level,cellPos);
+            BlockState liveState = SimulatedThrustAdapter.getBlockStateSafe(level, cellPos);
             if (liveState.hasProperty(ThrusterBlock.MULTIBLOCK)
-                && !liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
+                    && !liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
                 level.setBlock(cellPos, liveState.setValue(ThrusterBlock.MULTIBLOCK, true), Block.UPDATE_CLIENTS);
             }
             t.setChanged();
@@ -274,7 +271,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) continue;
                     if (t.tank != null && !fuelPool.isEmpty()) {
                         int take = Math.min(getBaseTankCapacityMb(), fuelPool.getAmount());
@@ -287,9 +284,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     t.updateConnectivity = true;
                     t.isThrustDirty = true;
                     t.thrusterData.setThrust(0);
-                    BlockState liveState = SimulatedThrustAdapter.getBlockStateSafe(level,pos);
+                    BlockState liveState = SimulatedThrustAdapter.getBlockStateSafe(level, pos);
                     if (liveState.hasProperty(ThrusterBlock.MULTIBLOCK)
-                        && liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
+                            && liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
                         level.setBlock(pos, liveState.setValue(ThrusterBlock.MULTIBLOCK, false), Block.UPDATE_CLIENTS);
                     }
                     t.setChanged();
@@ -320,7 +317,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public IFluidHandler getFluidHandler(Direction side) {
         ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
         if (ctrl == null) return null;
-        
+
         IFluidHandler fuel = ctrl.tank.getPrimaryHandler();
         IFluidHandler ox = (ctrl.oxidizerTank != null) ? ctrl.oxidizerTank.getPrimaryHandler() : null;
 
@@ -330,17 +327,17 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             }
             return null;
         }
-        
+
         if (side == null) {
             return (ox != null) ? new dev.propulsionteam.propulsionsimulated.utility.MultiFluidHandler(fuel, ox) : fuel;
         }
-        
+
         if (!isFrontLayerCell(ctrl, ctrl.getBlockState().getValue(AbstractThrusterBlock.FACING))) return null;
-        
+
         if (side == ctrl.getBlockState().getValue(AbstractThrusterBlock.FACING).getOpposite()) {
             return null;
         }
-        
+
         return (ox != null) ? new dev.propulsionteam.propulsionsimulated.utility.MultiFluidHandler(fuel, ox) : fuel;
     }
 
@@ -351,11 +348,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public AABB getRenderBoundingBox() {
         if (isController() && isMultiblock()) {
-            return new AABB(
-                worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-                worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width);
+            return MeshedThrusterFlameUtils.extendRenderBoundingBox(this,
+                    new AABB(
+                    worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+                    worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width),0);
         }
-        return super.getRenderBoundingBox();
+        return MeshedThrusterFlameUtils.extendRenderBoundingBox(this, super.getRenderBoundingBox(),0);
     }
 
     private boolean isFrontLayerCell(ThrusterBlockEntity ctrl, Direction cubeFacing) {
@@ -429,8 +427,8 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     // Keep thrust continuous for sub-1 mB windows: accumulator-based drain can
                     // legitimately round to 0 for this update while fuel is still available.
                     float consumptionRatio = consumption > 0
-                        ? (float) fuelConsumed / (float) consumption
-                        : 1.0f;
+                            ? (float) fuelConsumed / (float) consumption
+                            : 1.0f;
                     float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
                     float baseThrustPn = (float) (getBaseThrust() * getThrustUnitsPerKn());
                     baseThrustPn *= (float) calculateAtmosphericFactor();
@@ -474,7 +472,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             if (thrustPercentage > 0 && properties != null) {
                 final int tickRate = 10;
                 double baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
-                
+
                 boolean canUseOxidizer = validOxidizer();
                 // Multiblock fuel efficiency always applies; oxidizer adds an extra multiplier.
                 double fuelEff = getMultiblockFuelEfficiency(width);
@@ -487,13 +485,13 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 FluidStack fuelSim = tank.getPrimaryHandler().drain(fuelNeeded, IFluidHandler.FluidAction.SIMULATE);
                 int fuelAvail = fuelSim.getAmount();
                 float fuelRatio = fuelNeeded > 0
-                    ? (float) fuelAvail / (float) fuelNeeded
-                    : (fluidStack().isEmpty() ? 0.0f : 1.0f);
+                        ? (float) fuelAvail / (float) fuelNeeded
+                        : (fluidStack().isEmpty() ? 0.0f : 1.0f);
 
                 if (fuelRatio > 0) {
                     int fuelActual = (int) (fuelNeeded * fuelRatio);
                     tank.getPrimaryHandler().drain(fuelActual, IFluidHandler.FluidAction.EXECUTE);
-                    
+
                     if (canUseOxidizer) {
                         double oxNeededDouble = baseConsumption * (double) n * getMultiblockOxidizerEfficiency(width);
                         int oxToDrain = consumeOxidizerWithAccumulator(oxNeededDouble * fuelRatio);
@@ -596,9 +594,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         Vec3 localExhaustDirection = new Vec3(exhaustDirection.getStepX(), exhaustDirection.getStepY(), exhaustDirection.getStepZ());
         double half = width * 0.5d;
         Vec3 localCubeCenter = new Vec3(
-            worldPosition.getX() + half,
-            worldPosition.getY() + half,
-            worldPosition.getZ() + half
+                worldPosition.getX() + half,
+                worldPosition.getY() + half,
+                worldPosition.getZ() + half
         );
         return localCubeCenter.add(localExhaustDirection.scale(half + 0.45d));
     }
@@ -714,7 +712,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
                     if (x == 0 && y == 0 && z == 0) continue;
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,origin.offset(x, y, z));
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t && t.redstoneInput > max) {
                         max = t.redstoneInput;
                     }
@@ -797,7 +795,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
         float velocityScale = width == 2 ? 1.15f : 1.3f;
         Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
-            .mul(4.0f * emissionScale * velocityScale * particleVelocityMultiplier);
+                .mul(4.0f * emissionScale * velocityScale * particleVelocityMultiplier);
         ParticleOptions particleData = createParticleOptions();
 
         double speedPerTick = particleVelocity.length();
@@ -826,29 +824,29 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                         continue;
                     }
                     serverLevel.sendParticles(
-                        player,
-                        particleData,
-                        true,
-                        px,
-                        py,
-                        pz,
-                        0,
-                        particleVelocity.x,
-                        particleVelocity.y,
-                        particleVelocity.z,
-                        1.0
+                            player,
+                            particleData,
+                            true,
+                            px,
+                            py,
+                            pz,
+                            0,
+                            particleVelocity.x,
+                            particleVelocity.y,
+                            particleVelocity.z,
+                            1.0
                     );
                 }
             } else {
                 level.addParticle(
-                    particleData,
-                    true,
-                    worldNozzlePosition.x + ox + particleVelocity.x * beamFrac,
-                    worldNozzlePosition.y + oy + particleVelocity.y * beamFrac,
-                    worldNozzlePosition.z + oz + particleVelocity.z * beamFrac,
-                    particleVelocity.x,
-                    particleVelocity.y,
-                    particleVelocity.z
+                        particleData,
+                        true,
+                        worldNozzlePosition.x + ox + particleVelocity.x * beamFrac,
+                        worldNozzlePosition.y + oy + particleVelocity.y * beamFrac,
+                        worldNozzlePosition.z + oz + particleVelocity.z * beamFrac,
+                        particleVelocity.x,
+                        particleVelocity.y,
+                        particleVelocity.z
                 );
             }
         }
@@ -873,10 +871,11 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level,pos);
+                    BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level, pos);
                     if (!state.is(expectedBlock)) return false;
-                    if (!state.hasProperty(AbstractThrusterBlock.FACING) || state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
+                    if (!state.hasProperty(AbstractThrusterBlock.FACING) || state.getValue(AbstractThrusterBlock.FACING) != facing)
+                        return false;
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return false;
                     if (t.getClass() != expectedType) return false;
                     ThrusterBlockEntity ctrl = t.getControllerBE();
@@ -931,6 +930,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         }
         return super.getDisplayedThrustPnForTooltip();
     }
+
     @Override
     protected void addThrusterDetails(List<Component> tooltip, boolean isPlayerSneaking) {
         super.addThrusterDetails(tooltip, isPlayerSneaking);
@@ -940,51 +940,51 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (ctrl.isMultiblock()) {
             // --- Efficiency bonus ---
             float fuelEff = getMultiblockFuelEfficiency(ctrl.width);
-            float oxEff   = getMultiblockOxidizerEfficiency(ctrl.width);
+            float oxEff = getMultiblockOxidizerEfficiency(ctrl.width);
             int fuelSavePct = java.lang.Math.round((1.0f - fuelEff) * 100.0f);
-            int oxSavePct   = java.lang.Math.round((1.0f - oxEff)   * 100.0f);
+            int oxSavePct = java.lang.Math.round((1.0f - oxEff) * 100.0f);
             if (fuelSavePct > 0 || oxSavePct > 0) {
                 boolean hasOx = ctrl.validOxidizer();
                 // Header line for base multiblock savings (always active for multiblocks).
                 CreateLang.builder()
-                    .add(Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus"))
-                    .text(":")
-                    .space()
-                    .add(Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_active").withStyle(ChatFormatting.GREEN))
-                    .style(ChatFormatting.AQUA)
-                    .forGoggles(tooltip);
+                        .add(Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus"))
+                        .text(":")
+                        .space()
+                        .add(Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_active").withStyle(ChatFormatting.GREEN))
+                        .style(ChatFormatting.AQUA)
+                        .forGoggles(tooltip);
 
                 // Base multiblock fuel savings.
                 if (fuelSavePct > 0) {
                     CreateLang.builder()
-                        .add(Component.literal("  "))
-                        .add(Component.literal("Fuel: ").withStyle(ChatFormatting.GRAY))
-                        .add(Component.literal("-" + fuelSavePct + "%").withStyle(ChatFormatting.AQUA))
-                        .forGoggles(tooltip);
+                            .add(Component.literal("  "))
+                            .add(Component.literal("Fuel: ").withStyle(ChatFormatting.GRAY))
+                            .add(Component.literal("-" + fuelSavePct + "%").withStyle(ChatFormatting.AQUA))
+                            .forGoggles(tooltip);
                 }
 
                 // Additional oxidizer-based fuel savings.
                 if (oxSavePct > 0) {
                     CreateLang.builder()
-                        .add(Component.literal("  "))
-                        .add(Component.literal("Oxidizer Bonus: ").withStyle(ChatFormatting.GRAY))
-                        .add(hasOx
-                            ? Component.literal("-" + oxSavePct + "%").withStyle(ChatFormatting.AQUA)
-                            : Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
-                        .forGoggles(tooltip);
+                            .add(Component.literal("  "))
+                            .add(Component.literal("Oxidizer Bonus: ").withStyle(ChatFormatting.GRAY))
+                            .add(hasOx
+                                    ? Component.literal("-" + oxSavePct + "%").withStyle(ChatFormatting.AQUA)
+                                    : Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
+                            .forGoggles(tooltip);
                 }
 
                 float oxThrustMultiplier = getMultiblockOxidizerThrustMultiplier(ctrl.width);
                 int thrustBonusPct = java.lang.Math.round((oxThrustMultiplier - 1.0f) * 100.0f);
                 if (thrustBonusPct > 0) {
                     CreateLang.builder()
-                        .add(Component.literal("  "))
-                        .add(Component.translatable("createpropulsion.gui.goggles.thruster.thrust_bonus").withStyle(ChatFormatting.GRAY))
-                        .add(Component.literal(": ").withStyle(ChatFormatting.GRAY))
-                        .add(hasOx
-                            ? Component.literal("+" + thrustBonusPct + "%").withStyle(ChatFormatting.AQUA)
-                            : Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
-                        .forGoggles(tooltip);
+                            .add(Component.literal("  "))
+                            .add(Component.translatable("createpropulsion.gui.goggles.thruster.thrust_bonus").withStyle(ChatFormatting.GRAY))
+                            .add(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                            .add(hasOx
+                                    ? Component.literal("+" + thrustBonusPct + "%").withStyle(ChatFormatting.AQUA)
+                                    : Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
+                            .forGoggles(tooltip);
                 }
             }
         }
@@ -993,14 +993,14 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
         // --- Fuel tank (always shown) ---
         addFluidContainerTooltip(tooltip,
-            Component.translatable("createpropulsion.gui.goggles.thruster.fuel_label"),
-            ctrl.tank.getPrimaryHandler(), ctrl.lastConsumedMbPerTick);
+                Component.translatable("createpropulsion.gui.goggles.thruster.fuel_label"),
+                ctrl.tank.getPrimaryHandler(), ctrl.lastConsumedMbPerTick);
 
         // --- Oxidizer tank: multiblock only ---
         if (ctrl.isMultiblock() && ctrl.oxidizerTank != null) {
             addFluidContainerTooltip(tooltip,
-                Component.translatable("createpropulsion.gui.goggles.thruster.oxidizer_label"),
-                ctrl.oxidizerTank.getPrimaryHandler(), ctrl.lastOxidizerConsumedMbPerTick);
+                    Component.translatable("createpropulsion.gui.goggles.thruster.oxidizer_label"),
+                    ctrl.oxidizerTank.getPrimaryHandler(), ctrl.lastOxidizerConsumedMbPerTick);
         }
     }
 
@@ -1013,26 +1013,27 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
         // Label line: "Fuel:"
         CreateLang.builder()
-            .add(label.copy())
-            .style(ChatFormatting.WHITE)
-            .forGoggles(tooltip);
+                .add(label.copy())
+                .style(ChatFormatting.WHITE)
+                .forGoggles(tooltip);
 
         // Storage line: "  100 / 1000 mB"
         CreateLang.builder()
-            .add(Component.literal("  "))
-            .add(Component.literal(Integer.toString(amount)).withStyle(ChatFormatting.AQUA))
-            .add(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-            .add(Component.literal(Integer.toString(capacity)).withStyle(ChatFormatting.AQUA))
-            .add(Component.literal(" mB").withStyle(ChatFormatting.GRAY))
-            .forGoggles(tooltip);
+                .add(Component.literal("  "))
+                .add(Component.literal(Integer.toString(amount)).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
+                .add(Component.literal(Integer.toString(capacity)).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" mB").withStyle(ChatFormatting.GRAY))
+                .forGoggles(tooltip);
 
         // Consumption line: "  1.5 mB/t"
         CreateLang.builder()
-            .add(Component.literal("  "))
-            .add(Component.literal(String.format(Locale.ROOT, "%.1f", consumptionRate)).withStyle(ChatFormatting.AQUA))
-            .add(Component.literal(" mB/t").withStyle(ChatFormatting.GRAY))
-            .forGoggles(tooltip);
+                .add(Component.literal("  "))
+                .add(Component.literal(String.format(Locale.ROOT, "%.1f", consumptionRate)).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" mB/t").withStyle(ChatFormatting.GRAY))
+                .forGoggles(tooltip);
     }
+
     protected float getFuelEfficiencyMultiplier() {
         FluidStack currentFluid = fluidStack();
         if (currentFluid.isEmpty()) {
@@ -1066,12 +1067,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (properties.useFluidColor()) {
             int fluidColor = IClientFluidTypeExtensions.of(fluidStack().getFluid()).getTintColor(fluidStack()) & 0xFFFFFF;
             resolvedProperties = new FluidThrusterProperties(
-                properties.thrustMultiplier(),
-                properties.consumptionMultiplier(),
-                properties.particleType(),
-                properties.overrideTextures(),
-                fluidColor,
-                true
+                    properties.thrustMultiplier(),
+                    properties.consumptionMultiplier(),
+                    properties.particleType(),
+                    properties.overrideTextures(),
+                    fluidColor,
+                    true
             );
         }
         return resolvedProperties.particleType().createParticleOptions(resolvedProperties);
@@ -1103,7 +1104,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         compound.putDouble("LastOxidizerConsumedMbPerTick", lastOxidizerConsumedMbPerTick);
         compound.putDouble("FuelDrainAccumulator", fuelDrainAccumulator);
         compound.putDouble("OxidizerDrainAccumulator", oxidizerDrainAccumulator);
-        
+
         if (tank != null) {
             compound.put("FuelTankSync", tank.getPrimaryHandler().getFluid().saveOptional(registries));
         }
@@ -1146,9 +1147,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
         if (compound.contains("ControllerOffX")) {
             controllerPos = worldPosition.offset(
-                compound.getInt("ControllerOffX"),
-                compound.getInt("ControllerOffY"),
-                compound.getInt("ControllerOffZ"));
+                    compound.getInt("ControllerOffX"),
+                    compound.getInt("ControllerOffY"),
+                    compound.getInt("ControllerOffZ"));
         } else {
             controllerPos = null;
         }

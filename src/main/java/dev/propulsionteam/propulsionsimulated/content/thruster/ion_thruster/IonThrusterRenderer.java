@@ -32,15 +32,16 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
                               int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
         VectorThrusterDebugRenderer.render(be);
-        if (be.isController() && be.isMultiblock()) {
-            renderMultiblock(be, partialTicks, ms, buffer, light, overlay);
-        }
+
+        if (be.isMultiblock()) {
+            if (be.isController()) renderMultiblock(be, partialTicks, ms, buffer, light, overlay);
+        } else if (PropulsionConfig.isIonThrusterMeshedFlame())
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 0, 0, 0);
+
         if (be instanceof VectorThrusterBlockEntity vector) {
             VectorThrusterRenderer.render(vector, partialTicks, ms, buffer, light, overlay);
             VectorRedstoneLinkRenderer.renderOnBlockEntity(vector, partialTicks, ms, buffer, light, overlay);
         }
-        if (!be.isMultiblock() && PropulsionConfig.isIonThrusterMeshedFlame())
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 0, 0, 0);
     }
 
     private static void renderMultiblock(IonThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {

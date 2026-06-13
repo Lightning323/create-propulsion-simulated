@@ -154,7 +154,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return getPower();
     }
 
-    protected LerpedFloat powerInterpolated = LerpedFloat.linear().chase(0, 0.01, LerpedFloat.Chaser.LINEAR);
+    protected LerpedFloat meshedThrustPower = LerpedFloat.linear().chase(0, 0.01, LerpedFloat.Chaser.LINEAR);
 
     public int getLegacyPowerInt() {
         return (int) Math.round(getPower() * 15);

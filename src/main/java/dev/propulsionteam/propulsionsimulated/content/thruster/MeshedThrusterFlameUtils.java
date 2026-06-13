@@ -69,10 +69,10 @@ public class MeshedThrusterFlameUtils {
         debug_drawRenderBoundingBox(be, ms, buffer);
 
         //Set the power to the throttle
-        be.powerInterpolated.updateChaseTarget(be.getThrottle());
-        be.powerInterpolated.tickChaser();
+        be.meshedThrustPower.updateChaseTarget(be.getThrottle());
+        be.meshedThrustPower.tickChaser();
         //Get the interpolated power
-        float power = Mth.clamp(be.powerInterpolated.getValue(partialTicks), 0f, 1f);
+        float power = Mth.clamp(be.meshedThrustPower.getValue(partialTicks), 0f, 1f);
         if (power < DISPLAY_THRESHOLD) return;
 
 
@@ -111,44 +111,63 @@ public class MeshedThrusterFlameUtils {
         ms.popPose();
     }
 
+    /**
+     * Extends the render box in the direction of the thruster's meshed flame
+     * @param be
+     * @param box
+     * @param widthInflation the amount of extra thickness of the new bounding box, to account for vector thrusters
+     * @return
+     */
+    public static AABB extendRenderBoundingBox(
+            ThrusterBlockEntity be,
+            AABB box,
+            int widthInflation
+    ) {
+        if (be.meshedThrustPower.getValue() < DISPLAY_THRESHOLD)
+            return box;
 
-    public static AABB extendRenderBoundingBox(ThrusterBlockEntity be, AABB box) {
+        float partialTicks = Minecraft.getInstance()
+                .getTimer()
+                .getGameTimeDeltaPartialTick(false);
+
+        float power = Mth.clamp(
+                be.meshedThrustPower.getValue(partialTicks),
+                0f,
+                1f
+        );
+
         Direction facing = be.getBlockState().getValue(ThrusterBlock.FACING);
-        float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
-        float power = Mth.clamp(be.powerInterpolated.getValue(partialTicks), 0f, 1f);
-        if (power < DISPLAY_THRESHOLD) return box;
 
-        double length = power * 8.0; // blocks
+        double length = power * 8.0;
+        double width = power * widthInflation;
 
         return switch (facing) {
-            case DOWN -> new AABB(
-                    box.minX, box.minY, box.minZ,
-                    box.maxX, box.maxY + length, box.maxZ
-            );
+            case UP, DOWN -> new AABB(
+                    box.minX - width,
+                    facing == Direction.UP ? box.minY - length : box.minY,
+                    box.minZ - width,
 
-            case UP -> new AABB(
-                    box.minX, box.minY - length, box.minZ,
-                    box.maxX, box.maxY, box.maxZ
+                    box.maxX + width,
+                    facing == Direction.UP ? box.maxY : box.maxY + length,
+                    box.maxZ + width
             );
+            case NORTH, SOUTH -> new AABB(
+                    box.minX - width,
+                    box.minY - width,
+                    facing == Direction.NORTH ? box.minZ - length : box.minZ,
 
-            case SOUTH -> new AABB(
-                    box.minX, box.minY, box.minZ - length,
-                    box.maxX, box.maxY, box.maxZ
+                    box.maxX + width,
+                    box.maxY + width,
+                    facing == Direction.NORTH ? box.maxZ : box.maxZ + length
             );
+            case EAST, WEST -> new AABB(
+                    facing == Direction.WEST ? box.minX - length : box.minX,
+                    box.minY - width,
+                    box.minZ - width,
 
-            case NORTH -> new AABB(
-                    box.minX, box.minY, box.minZ,
-                    box.maxX, box.maxY, box.maxZ + length
-            );
-
-            case EAST -> new AABB(
-                    box.minX - length, box.minY, box.minZ,
-                    box.maxX, box.maxY, box.maxZ
-            );
-
-            case WEST -> new AABB(
-                    box.minX, box.minY, box.minZ,
-                    box.maxX + length, box.maxY, box.maxZ
+                    facing == Direction.WEST ? box.maxX : box.maxX + length,
+                    box.maxY + width,
+                    box.maxZ + width
             );
         };
     }

@@ -342,12 +342,6 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
-    public AABB getRenderBoundingBox() {
-        if (PropulsionConfig.isIonThrusterMeshedFlame()) return super.getRenderBoundingBox();
-        else return MeshedThrusterFlameUtils.extendRenderBoundingBox(this, super.getRenderBoundingBox());
-    }
-
-    @Override
     public boolean shouldEmitParticles() {
         if (PropulsionConfig.isIonThrusterMeshedFlame()) return false;
 
