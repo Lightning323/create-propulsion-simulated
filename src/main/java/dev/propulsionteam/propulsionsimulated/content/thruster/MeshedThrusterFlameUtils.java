@@ -8,44 +8,64 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.Thruster
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 
 import java.util.Optional;
 
-public class ThrusterRenderUtils {
+public class MeshedThrusterFlameUtils {
 
-    private static final ResourceLocation THRUSTER_FLAME_SHADER = CreatePropulsion.loc("test");
+    private static final ResourceLocation THRUSTER_FLAME_SHADER = CreatePropulsion.loc("thruster_flame");
     private static final float FLAME_SIZE = 2f;
     private static final float BLOCK_PIXEL = 1f / 16f;
     private static final float FLAME_PIXEL = BLOCK_PIXEL / FLAME_SIZE;
+    private static final float DISPLAY_THRESHOLD = 0.06f;
 
-    public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+    private static void debug_drawRenderBoundingBox(ThrusterBlockEntity be, PoseStack ms, MultiBufferSource buffer) {
+        //Debug render box
+        AABB box = be.getRenderBoundingBox();
+        BlockPos pos2 = be.getBlockPos();
+        AABB localBox = box.move(-pos2.getX(), -pos2.getY(), -pos2.getZ());
+        LevelRenderer.renderLineBox(ms, buffer.getBuffer(RenderType.lines()), localBox, 1, 0, 0, 1);
+    }
+
+    public static void renderMultiblockFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, int w) {
+        MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 0, 0, 0);
+        if (w == 2) {
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 1, 0, 0);
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 0, 0, 1);
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 1, 0, 1);
+        }
+    }
+
+    public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, int offsetX, int offsetY, int offsetZ) {
+        debug_drawRenderBoundingBox(be, ms, buffer);
+
         //Set the power to the throttle
         be.powerInterpolated.updateChaseTarget(be.getThrottle());
         be.powerInterpolated.tickChaser();
-
         //Get the interpolated power
-        var power = Mth.clamp(be.powerInterpolated.getValue(partialTicks), 0f, 1f);
-        if (!(power > 0.05)) return;
-        System.out.println("Power: " + power);
+        float power = Mth.clamp(be.powerInterpolated.getValue(partialTicks), 0f, 1f);
+        if (power < DISPLAY_THRESHOLD) return;
 
 
         final var state = be.getBlockState();
         final var pos = be.getBlockPos();
         final var facing = state.getValue(ThrusterBlock.FACING);
-        var flameOffset = snapToBlockPixel(0.35f + ((24 - 4 * Mth.clamp(power, 0.5f, 1f)) / 16f) - 0.5f);
+        var flameOffset = snapToBlockPixel(-1.5f + ((24 - 4 * Mth.clamp(power, 0.5f, 1f)) / 16f));
         var lengthMultiplier = snapToFlamePixel((power * 4f + 1f + (0.5f - power * power * power)));
         var widthMultiplier = snapToFlamePixel((power * 1.5f + 1));
 
@@ -53,37 +73,79 @@ public class ThrusterRenderUtils {
         ms.translate(0.5f, 0.5f, 0.5f);
         ms.translate(facing.getStepX() * flameOffset, facing.getStepY() * flameOffset, facing.getStepZ() * flameOffset);
         rotateTowardsFacing(ms, facing);
+        ms.translate(offsetX, offsetY, offsetZ);
         ms.mulPose(Axis.YP.rotation(getBillboardAngle(be, pos, facing, flameOffset, partialTicks)));
 
-        final var palette = 0; //Soul Fire modifier
 
         final ShaderProgram shader = VeilRenderSystem.setShader(THRUSTER_FLAME_SHADER);
         Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(THRUSTER_FLAME_SHADER);
 
         if (shader == null) {
-            System.out.println("Failed to set shader "+resource.isPresent());
+            System.out.println("Failed to set shader " + resource.isPresent());
             ms.popPose();
             return;
         }
-//        final float flameRenderTime = 0.5f;//(float) Mth.lerp(partialTicks, be.lastRenderTime, be.renderTime) + (pos.hashCode() % 10);
-//        shader.getUniformSafe("FlameRenderTime").setFloat(flameRenderTime);
-//        shader.getUniformSafe("Intensity").setFloat(Mth.clamp(power * 2f - .35f, 0.25f, 1.5f));
-//        shader.getUniformSafe("Palette").setFloat(palette);
-//        shader.getUniformSafe("LengthMultiplier").setFloat(Math.max(lengthMultiplier, FLAME_PIXEL));
-//        shader.getUniformSafe("WidthMultiplier").setFloat(Math.max(widthMultiplier, FLAME_PIXEL));
+        float shaderTime = (be.getLevel().getGameTime() + partialTicks) * 0.08f;
+        shader.getUniformSafe("FlameRenderTime").setFloat(shaderTime);
+        shader.getUniformSafe("Intensity").setFloat(Mth.clamp(power * 2f - .35f, 0.25f, 1.5f));
+        shader.getUniformSafe("Palette").setFloat(soulFlame ? 1 : 0); //Soul Fire modifier
+        shader.getUniformSafe("LengthMultiplier").setFloat(Math.max(lengthMultiplier, FLAME_PIXEL));
+        shader.getUniformSafe("WidthMultiplier").setFloat(Math.max(widthMultiplier, FLAME_PIXEL));
 
         renderFlame(ms, FLAME_SIZE, lengthMultiplier, widthMultiplier);
         ms.popPose();
     }
 
 
+    public static AABB extendRenderBoundingBox(ThrusterBlockEntity be, AABB box) {
+        Direction facing = be.getBlockState().getValue(ThrusterBlock.FACING);
+        float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        float power = Mth.clamp(be.powerInterpolated.getValue(partialTicks), 0f, 1f);
+        if (power < DISPLAY_THRESHOLD) return box;
+
+        double length = power * 8.0; // blocks
+
+        return switch (facing) {
+            case DOWN -> new AABB(
+                    box.minX, box.minY, box.minZ,
+                    box.maxX, box.maxY + length, box.maxZ
+            );
+
+            case UP -> new AABB(
+                    box.minX, box.minY - length, box.minZ,
+                    box.maxX, box.maxY, box.maxZ
+            );
+
+            case SOUTH -> new AABB(
+                    box.minX, box.minY, box.minZ - length,
+                    box.maxX, box.maxY, box.maxZ
+            );
+
+            case NORTH -> new AABB(
+                    box.minX, box.minY, box.minZ,
+                    box.maxX, box.maxY, box.maxZ + length
+            );
+
+            case EAST -> new AABB(
+                    box.minX - length, box.minY, box.minZ,
+                    box.maxX, box.maxY, box.maxZ
+            );
+
+            case WEST -> new AABB(
+                    box.minX, box.minY, box.minZ,
+                    box.maxX + length, box.maxY, box.maxZ
+            );
+        };
+    }
+
+
     private static void rotateTowardsFacing(PoseStack poseStack, Direction facing) {
         switch (facing) {
-            case DOWN -> poseStack.mulPose(Axis.ZP.rotation((float) Math.PI));
-            case NORTH -> poseStack.mulPose(Axis.XN.rotation((float) (Math.PI / 2f)));
-            case SOUTH -> poseStack.mulPose(Axis.XP.rotation((float) (Math.PI / 2f)));
-            case EAST -> poseStack.mulPose(Axis.ZN.rotation((float) (Math.PI / 2f)));
-            case WEST -> poseStack.mulPose(Axis.ZP.rotation((float) (Math.PI / 2f)));
+            case UP -> poseStack.mulPose(Axis.ZP.rotation((float) Math.PI));
+            case SOUTH -> poseStack.mulPose(Axis.XN.rotation((float) (Math.PI / 2f)));
+            case NORTH -> poseStack.mulPose(Axis.XP.rotation((float) (Math.PI / 2f)));
+            case WEST -> poseStack.mulPose(Axis.ZN.rotation((float) (Math.PI / 2f)));
+            case EAST -> poseStack.mulPose(Axis.ZP.rotation((float) (Math.PI / 2f)));
             default -> {
             }
         }
@@ -98,11 +160,11 @@ public class ThrusterRenderUtils {
 
     private static Vec3 toLocalFacingSpace(Vec3 vec, Direction facing) {
         return switch (facing) {
-            case DOWN -> new Vec3(-vec.x, -vec.y, vec.z);
-            case NORTH -> new Vec3(vec.x, -vec.z, vec.y);
-            case SOUTH -> new Vec3(vec.x, vec.z, -vec.y);
-            case EAST -> new Vec3(-vec.y, vec.x, vec.z);
-            case WEST -> new Vec3(vec.y, -vec.x, vec.z);
+            case UP -> new Vec3(-vec.x, -vec.y, vec.z);
+            case SOUTH -> new Vec3(vec.x, -vec.z, vec.y);
+            case NORTH -> new Vec3(vec.x, vec.z, -vec.y);
+            case WEST -> new Vec3(-vec.y, vec.x, vec.z);
+            case EAST -> new Vec3(vec.y, -vec.x, vec.z);
             default -> vec;
         };
     }

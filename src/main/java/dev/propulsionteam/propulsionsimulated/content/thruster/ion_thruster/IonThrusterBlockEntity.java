@@ -1,5 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster;
 
+import dev.engine_room.flywheel.api.model.Mesh;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDamager;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -7,6 +8,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
+import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
@@ -25,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -143,7 +146,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                 if (consumed > 0) {
                     energyStored -= consumed;
                     float consumptionRatio = (float) consumed / (float) totalDrain;
-                        float baseThrustPn = (float) (PropulsionConfig.ION_THRUSTER_BASE_THRUST.get() * getThrustUnitsPerKn());
+                    float baseThrustPn = (float) (PropulsionConfig.ION_THRUSTER_BASE_THRUST.get() * getThrustUnitsPerKn());
                     baseThrustPn *= (float) calculateAtmosphericFactor();
                     thrust = baseThrustPn * thrustPercentage * consumptionRatio;
                 }
@@ -259,6 +262,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         }
     }
 
+
     private int insertEnergy(int maxReceive, boolean simulate) {
         if (maxReceive <= 0) {
             return 0;
@@ -332,19 +336,25 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
 
-
     @Override
     protected boolean isWorking() {
         return getTotalEnergyStoredFe() > 0;
     }
 
     @Override
+    public AABB getRenderBoundingBox() {
+        if (PropulsionConfig.isIonThrusterMeshedFlame()) return super.getRenderBoundingBox();
+        else return MeshedThrusterFlameUtils.extendRenderBoundingBox(this, super.getRenderBoundingBox());
+    }
+
+    @Override
     public boolean shouldEmitParticles() {
-        return false;//TODO: LIGHTNING NEEDS TO ADD CONFIGS TO
-//        if (isMultiblock() && !isController()) {
-//            return false;
-//        }
-//        return getThrottle() > 0 && getTotalEnergyStoredFe() > 0;
+        if (PropulsionConfig.isIonThrusterMeshedFlame()) return false;
+
+        if (isMultiblock() && !isController()) {
+            return false;
+        }
+        return getThrottle() > 0 && getTotalEnergyStoredFe() > 0;
     }
 
     @Override
@@ -428,7 +438,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                         .forGoggles(tooltip);
             }
         }
-        
+
         // Label line: "Energy Storage:"
         CreateLang.builder()
                 .add(Component.translatable("createpropulsion.gui.goggles.thruster.energy_container"))
