@@ -23,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import org.joml.Vector3i;
 
 import java.util.Optional;
 
@@ -43,15 +44,28 @@ public class MeshedThrusterFlameUtils {
     }
 
     public static void renderMultiblockFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, int w) {
-        MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 0, 0, 0);
-        if (w == 2) {
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 1, 0, 0);
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 0, 0, 1);
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, 1, 0, 1);
+        final var state = be.getBlockState();
+        final var facing = state.getValue(ThrusterBlock.FACING);
+        Vector3i offset = new Vector3i(0, 0, 0);
+        switch (facing) {
+            case UP -> offset.set(-w + 1, 0, 0);//This is down
+            case SOUTH -> offset.set(0, 0, 0);//this is north
+            case NORTH -> offset.set(0 , w-1, -w + 1);//this is south
+            case WEST -> offset.set(-w + 1, 1, 0);//this is east
+            case EAST -> offset.set(0, 0, 0);//this is west
+            default -> {//this is up
+                offset.set(0, w - 1, 0);
+            }
+        }
+
+        for (int x = 0; x < w; x++) {
+            for (int z = 0; z < w; z++) {
+                MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, x + offset.x, offset.y, z + offset.z);
+            }
         }
     }
 
-    public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, int offsetX, int offsetY, int offsetZ) {
+    public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, float offsetX, float offsetY, float offsetZ) {
         debug_drawRenderBoundingBox(be, ms, buffer);
 
         //Set the power to the throttle
@@ -74,6 +88,7 @@ public class MeshedThrusterFlameUtils {
         ms.translate(facing.getStepX() * flameOffset, facing.getStepY() * flameOffset, facing.getStepZ() * flameOffset);
         rotateTowardsFacing(ms, facing);
         ms.translate(offsetX, offsetY, offsetZ);
+
         ms.mulPose(Axis.YP.rotation(getBillboardAngle(be, pos, facing, flameOffset, partialTicks)));
 
 
