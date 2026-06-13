@@ -331,8 +331,8 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
     }
 
     @Override
-    public boolean shouldEmitParticles() {
-        if (!super.shouldEmitParticles()) {
+    public boolean shouldEmitPlume() {
+        if (!super.shouldEmitPlume()) {
             return false;
         }
         ItemThrusterProperties properties = SolidThrusterFuelManager.getProperties(getFuelStack());

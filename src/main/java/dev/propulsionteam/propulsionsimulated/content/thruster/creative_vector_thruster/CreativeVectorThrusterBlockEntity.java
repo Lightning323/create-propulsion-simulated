@@ -82,7 +82,7 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
     }
 
     @Override
-    public boolean shouldEmitParticles() {
+    public boolean shouldEmitPlume() {
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.NONE)
             return false;
         if (!isPowered())

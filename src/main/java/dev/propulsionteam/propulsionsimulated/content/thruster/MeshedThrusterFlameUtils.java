@@ -33,7 +33,7 @@ public class MeshedThrusterFlameUtils {
     private static final float FLAME_SIZE = 2f;
     private static final float BLOCK_PIXEL = 1f / 16f;
     private static final float FLAME_PIXEL = BLOCK_PIXEL / FLAME_SIZE;
-    private static final float DISPLAY_THRESHOLD = 0.06f;
+    protected static final float DISPLAY_THRESHOLD = 0.03f;
 
     private static void debug_drawRenderBoundingBox(ThrusterBlockEntity be, PoseStack ms, MultiBufferSource buffer) {
         //Debug render box
@@ -67,14 +67,10 @@ public class MeshedThrusterFlameUtils {
 
     public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, float offsetX, float offsetY, float offsetZ) {
         debug_drawRenderBoundingBox(be, ms, buffer);
-
-        //Set the power to the throttle
-        be.meshedThrustPower.updateChaseTarget(be.getThrottle());
-        be.meshedThrustPower.tickChaser();
         //Get the interpolated power
-        float power = Mth.clamp(be.meshedThrustPower.getValue(partialTicks), 0f, 1f);
+        float power = Mth.clamp(be.interpolatedPower.getValue(partialTicks), 0f, 1f);
+//        System.out.println("Interpolated power: " + power);
         if (power < DISPLAY_THRESHOLD) return;
-
 
         final var state = be.getBlockState();
         final var pos = be.getBlockPos();
@@ -123,7 +119,7 @@ public class MeshedThrusterFlameUtils {
             AABB box,
             int widthInflation
     ) {
-        if (be.isMeshedPlume() && be.meshedThrustPower.getValue() < DISPLAY_THRESHOLD)
+        if (be.isMeshedPlume() && be.interpolatedPower.getValue() < DISPLAY_THRESHOLD)
             return box;
 
         float partialTicks = Minecraft.getInstance()
@@ -131,7 +127,7 @@ public class MeshedThrusterFlameUtils {
                 .getGameTimeDeltaPartialTick(false);
 
         float power = Mth.clamp(
-                be.meshedThrustPower.getValue(partialTicks),
+                be.interpolatedPower.getValue(partialTicks),
                 0f,
                 1f
         );

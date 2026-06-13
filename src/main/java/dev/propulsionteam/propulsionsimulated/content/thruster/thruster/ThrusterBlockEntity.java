@@ -3,7 +3,6 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.thruster;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
-import dev.eriksonn.aeronautics.content.particle.HotAirEmberParticleData;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.*;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
@@ -12,12 +11,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -27,7 +22,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -754,8 +748,8 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    public boolean shouldEmitParticles() {
-        if (!super.shouldEmitParticles()) {
+    public boolean shouldEmitPlume() {
+        if (!super.shouldEmitPlume()) {
             return false;
         }
         if (isMultiblock()) {
@@ -768,12 +762,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    public void emitParticles(Level level, BlockPos pos, BlockState state) {
+    public void emitPlumeParticles(Level level, BlockPos pos, BlockState state) {
         if (!(isController() && isMultiblock())) {
-            super.emitParticles(level, pos, state);
+            super.emitPlumeParticles(level, pos, state);
             return;
         }
-        if (!shouldEmitParticles()) return;
+        if (!shouldEmitPlume()) return;
         float power = getPower();
         float emissionScale = (float) Math.max(power, MathUtility.epsilon);
         if (power <= 0) return;

@@ -1,11 +1,9 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
 
-import dev.eriksonn.aeronautics.content.particle.HotAirEmberParticleData;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.particles.ParticleTypes;
 import dev.propulsionteam.propulsionsimulated.particles.plume.PlumeParticleData;
 import dev.propulsionteam.propulsionsimulated.utility.GoggleUtils;
 import dev.propulsionteam.propulsionsimulated.utility.math.MathUtility;
@@ -19,6 +17,7 @@ import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,9 +26,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -43,9 +39,12 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+
+import static dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils.DISPLAY_THRESHOLD;
 
 public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         implements IHaveGoggleInformation, dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor, BlockSubLevelAssemblyListener {
@@ -99,6 +98,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     //CC Peripheral
     public AbstractComputerBehaviour computerBehaviour;
+
     public enum ControlMode {
         NORMAL,
         PERIPHERAL
@@ -172,7 +172,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return getPower();
     }
 
-    protected LerpedFloat meshedThrustPower = LerpedFloat.linear().chase(0, 0.01, LerpedFloat.Chaser.LINEAR);
+    protected LerpedFloat interpolatedPower = LerpedFloat.linear().chase(0, 0.01, LerpedFloat.Chaser.LINEAR);
 
     public int getLegacyPowerInt() {
         return (int) Math.round(getPower() * 15);
@@ -188,6 +188,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
         behaviours.add(new ThrusterDamager(this));
     }
+
+    final int tick_rate = 10;
 
     @Override
     public void tick() {
@@ -210,15 +212,17 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         BlockState currentBlockState = isOutsideWorldHeight ? getBlockState() : SimulatedThrustAdapter.getBlockStateSafe(level, worldPosition);
         if (level.isClientSide) {
             ThrusterSoundHooks.clientTick(this);
+            interpolatedPower.updateChaseTarget(getPower());
+            interpolatedPower.tickChaser();
             return;
         }
-        if (shouldEmitParticles()) {
-            emitParticles(level, worldPosition, currentBlockState);
+
+        if (shouldEmitPlume()) {
+            if (isMeshedPlume()) emitMeshedParticles(level, worldPosition, currentBlockState);
+            else emitPlumeParticles(level, worldPosition, currentBlockState);
         }
 
         currentTick++;
-        final int tick_rate = 10;
-
         //Periodically recalculate obstruction
         if (currentTick % (tick_rate * 2) == 0) {
             int previousEmptyBlocks = emptyBlocks;
@@ -277,7 +281,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         isThrustDirty = true;
     }
 
-    public boolean shouldEmitParticles() {
+    public boolean shouldEmitPlume() {
         return isPowered() && isWorking();
     }
 
@@ -347,7 +351,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     public boolean isBluePlume() {
-        return getPlumeType() == CreativeThrusterBlockEntity.PlumeType.ION;
+        return getPlumeType() == CreativeThrusterBlockEntity.PlumeType.PLASMA ||
+                getPlumeType() == CreativeThrusterBlockEntity.PlumeType.ION;
     }
 
     public IFluidHandler getFluidHandler(Direction side) {
@@ -592,18 +597,15 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
     }
 
-    public void emitParticles(Level level, BlockPos pos, BlockState state) {
+    protected final Random particleRandom = new Random();
+
+    public void emitMeshedParticles(Level level, BlockPos pos, BlockState state) {
         if (emptyBlocks == 0) return;
         float power = getPower();
-
-        double particleCountMultiplier = org.joml.Math.clamp(0.0d, PARTICLE_MULTIPLIER_CAP, getParticleCountMultiplier());
-        if (particleCountMultiplier <= 0) return;
-        double particleVelocityMultiplier = org.joml.Math.clamp(0.0d, PARTICLE_MULTIPLIER_CAP, getParticleVelocityMultiplier());
+        if (particleRandom.nextFloat() > power) return;
 
         float emissionScale = (float) Math.max(power, MathUtility.epsilon);
-
         Vec3 localExhaustDirection = getParticleDebugExhaustDirectionLocal();
-        Vector3d additionalVel = new Vector3d();
         Vec3 localNozzlePosition = getParticleDebugNozzlePositionLocal();
 
         // Convert local sublevel coordinates into world-space coordinates so particles align
@@ -618,8 +620,54 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
-                .mul(getParticleVelocity() * emissionScale * particleVelocityMultiplier)
-                .add(additionalVel);
+                .mul(getParticleVelocity() * emissionScale * 0.15);
+
+        double spawnX = worldNozzlePosition.x;
+        double spawnY = worldNozzlePosition.y;
+        double spawnZ = worldNozzlePosition.z;
+
+        for (int i = 0; i < 2; i++) {
+            if (particleRandom.nextFloat() > 0.7f) {
+                emitParticle(
+                        spawnX + (particleRandom.nextFloat() - 0.5) * 1,
+                        spawnY + (particleRandom.nextFloat() - 0.5) * 1,
+                        spawnZ + (particleRandom.nextFloat() - 0.5) * 1,
+                        particleVelocity, isBluePlume() ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME);
+            } else {
+                emitParticle(
+                        spawnX + (particleRandom.nextFloat() - 0.5) * 0.6,
+                        spawnY + (particleRandom.nextFloat() - 0.5) * 0.6,
+                        spawnZ + (particleRandom.nextFloat() - 0.5) * 0.6,
+                        particleVelocity, ParticleTypes.LARGE_SMOKE);
+            }
+        }
+    }
+
+    public void emitPlumeParticles(Level level, BlockPos pos, BlockState state) {
+        if (emptyBlocks == 0) return;
+        float power = getPower();
+
+        double particleCountMultiplier = org.joml.Math.clamp(0.0d, PARTICLE_MULTIPLIER_CAP, getParticleCountMultiplier());
+        if (particleCountMultiplier <= 0) return;
+        double particleVelocityMultiplier = org.joml.Math.clamp(0.0d, PARTICLE_MULTIPLIER_CAP, getParticleVelocityMultiplier());
+
+        float emissionScale = (float) Math.max(power, MathUtility.epsilon);
+        Vec3 localExhaustDirection = getParticleDebugExhaustDirectionLocal();
+        Vec3 localNozzlePosition = getParticleDebugNozzlePositionLocal();
+
+        // Convert local sublevel coordinates into world-space coordinates so particles align
+        // with ship rotation instead of sticking to global axes.
+        Vec3 worldNozzlePosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition);
+        Vec3 worldAheadPosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition.add(localExhaustDirection));
+        Vec3 worldExhaustDirection = worldAheadPosition.subtract(worldNozzlePosition);
+        if (worldExhaustDirection.lengthSqr() < MathUtility.epsilon) {
+            worldExhaustDirection = localExhaustDirection;
+        } else {
+            worldExhaustDirection = worldExhaustDirection.normalize();
+        }
+
+        Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
+                .mul(getParticleVelocity() * emissionScale * particleVelocityMultiplier);
 
         // Enough particles each tick so spacing along the velocity vector stays near TARGET_PARTICLE_SPACING_BLOCKS (no fractional carry → no skipped ticks).
         double speedPerTick = particleVelocity.length();
@@ -645,7 +693,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
     }
 
-    protected void emitParticle(double spawnX, double spawnY, double spawnZ, Vector3d particleVelocity,  ParticleOptions particleData) {
+    protected void emitParticle(double spawnX, double spawnY, double spawnZ, Vector3d particleVelocity, ParticleOptions particleData) {
         if (level instanceof ServerLevel serverLevel) {
             double maxDistSq = getParticleBroadcastRange() * getParticleBroadcastRange();
             for (ServerPlayer player : serverLevel.players()) {

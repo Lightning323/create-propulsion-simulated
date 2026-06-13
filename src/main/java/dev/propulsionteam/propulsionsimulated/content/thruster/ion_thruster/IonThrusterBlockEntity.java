@@ -9,6 +9,7 @@ import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
 import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
@@ -335,6 +336,9 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         return new IonParticleData(List.of(), getDyeColor(), null);
     }
 
+    public CreativeThrusterBlockEntity.PlumeType getPlumeType() {
+        return CreativeThrusterBlockEntity.PlumeType.ION;
+    }
 
     @Override
     protected boolean isWorking() {
@@ -342,7 +346,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
-    public boolean shouldEmitParticles() {
+    public boolean shouldEmitPlume() {
         if (isMultiblock() && !isController()) {
             return false;
         }

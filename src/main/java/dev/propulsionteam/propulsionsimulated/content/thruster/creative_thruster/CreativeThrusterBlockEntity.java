@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import dev.ryanhcode.sable.Sable;
@@ -417,7 +416,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    public boolean shouldEmitParticles() {
+    public boolean shouldEmitPlume() {
         if (plumeType == PlumeType.NONE)
             return false;
 
@@ -446,12 +445,12 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    public void emitParticles(Level level, BlockPos pos, BlockState state) {
+    public void emitPlumeParticles(Level level, BlockPos pos, BlockState state) {
         if (!(isController() && isMultiblock())) {
-            super.emitParticles(level, pos, state);
+            super.emitPlumeParticles(level, pos, state);
             return;
         }
-        if (!shouldEmitParticles()) return;
+        if (!shouldEmitPlume()) return;
         float power = getPower();
         float emissionScale = (float) Math.max(power, 1e-6f);
         if (power <= 0) return;
