@@ -602,7 +602,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public void emitMeshedParticles(Level level, BlockPos pos, BlockState state) {
         if (emptyBlocks == 0) return;
         float power = getPower();
-        if (particleRandom.nextFloat() > power) return;
+        if (particleRandom.nextFloat() > power && particleRandom.nextBoolean()) return;
 
         float emissionScale = (float) Math.max(power, MathUtility.epsilon);
         Vec3 localExhaustDirection = getParticleDebugExhaustDirectionLocal();
@@ -625,21 +625,23 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         double spawnX = worldNozzlePosition.x;
         double spawnY = worldNozzlePosition.y;
         double spawnZ = worldNozzlePosition.z;
-
         for (int i = 0; i < 2; i++) {
-            if (particleRandom.nextFloat() > 0.7f) {
-                emitParticle(
-                        spawnX + (particleRandom.nextFloat() - 0.5) * 1,
-                        spawnY + (particleRandom.nextFloat() - 0.5) * 1,
-                        spawnZ + (particleRandom.nextFloat() - 0.5) * 1,
-                        particleVelocity, isBluePlume() ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME);
-            } else {
-                emitParticle(
-                        spawnX + (particleRandom.nextFloat() - 0.5) * 0.6,
-                        spawnY + (particleRandom.nextFloat() - 0.5) * 0.6,
-                        spawnZ + (particleRandom.nextFloat() - 0.5) * 0.6,
-                        particleVelocity, ParticleTypes.LARGE_SMOKE);
-            }
+            emitParticle(
+                    spawnX + (particleRandom.nextFloat() - 0.5) * 1,
+                    spawnY + (particleRandom.nextFloat() - 0.5) * 1,
+                    spawnZ + (particleRandom.nextFloat() - 0.5) * 1,
+                    particleVelocity, isBluePlume() ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME);
+        }
+
+        if (power > 0.5) {
+            spawnX += worldExhaustDirection.x * 2;
+            spawnY += worldExhaustDirection.y * 2;
+            spawnZ += worldExhaustDirection.z * 2;
+            emitParticle(
+                    spawnX + (particleRandom.nextFloat() - 0.5) * 1.5,
+                    spawnY + (particleRandom.nextFloat() - 0.5) * 1.5,
+                    spawnZ + (particleRandom.nextFloat() - 0.5) * 1.5,
+                    particleVelocity, ParticleTypes.LARGE_SMOKE);
         }
     }
 
