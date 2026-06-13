@@ -118,12 +118,12 @@ public class MeshedThrusterFlameUtils {
      * @param widthInflation the amount of extra thickness of the new bounding box, to account for vector thrusters
      * @return
      */
-    public static AABB extendRenderBoundingBox(
+    public static AABB inflateRenderBoundingBox(
             ThrusterBlockEntity be,
             AABB box,
             int widthInflation
     ) {
-        if (be.meshedThrustPower.getValue() < DISPLAY_THRESHOLD)
+        if (be.isMeshedPlume() && be.meshedThrustPower.getValue() < DISPLAY_THRESHOLD)
             return box;
 
         float partialTicks = Minecraft.getInstance()
@@ -154,18 +154,18 @@ public class MeshedThrusterFlameUtils {
             case NORTH, SOUTH -> new AABB(
                     box.minX - width,
                     box.minY - width,
-                    facing == Direction.NORTH ? box.minZ - length : box.minZ,
+                    facing == Direction.SOUTH ? box.minZ - length : box.minZ,
 
                     box.maxX + width,
                     box.maxY + width,
-                    facing == Direction.NORTH ? box.maxZ : box.maxZ + length
+                    facing == Direction.SOUTH ? box.maxZ : box.maxZ + length
             );
             case EAST, WEST -> new AABB(
-                    facing == Direction.WEST ? box.minX - length : box.minX,
+                    facing == Direction.EAST ? box.minX - length : box.minX,
                     box.minY - width,
                     box.minZ - width,
 
-                    facing == Direction.WEST ? box.maxX : box.maxX + length,
+                    facing == Direction.EAST ? box.maxX : box.maxX + length,
                     box.maxY + width,
                     box.maxZ + width
             );

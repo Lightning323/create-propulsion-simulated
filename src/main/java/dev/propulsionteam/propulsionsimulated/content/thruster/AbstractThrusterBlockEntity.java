@@ -1,8 +1,11 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
 
+import dev.eriksonn.aeronautics.content.particle.HotAirEmberParticleData;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.particles.ParticleTypes;
 import dev.propulsionteam.propulsionsimulated.particles.plume.PlumeParticleData;
 import dev.propulsionteam.propulsionsimulated.utility.GoggleUtils;
 import dev.propulsionteam.propulsionsimulated.utility.math.MathUtility;
@@ -24,6 +27,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -42,19 +48,23 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
 public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
-    implements IHaveGoggleInformation, dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor, BlockSubLevelAssemblyListener {
+        implements IHaveGoggleInformation, dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor, BlockSubLevelAssemblyListener {
     // ThrusterData thrust is stored in pN-like units where `thrustUnitsPerKn` units == 1 displayed kN.
     // Sable impulse conversion must use the same basis so display/diagram and applied force match.
     protected static final double PARTICLE_BROADCAST_RANGE_BLOCKS = 150.0d;
     //Constants
     protected static final int TICKS_PER_ENTITY_CHECK = 5;
     protected static final float PARTICLE_VELOCITY = 4.0f;
-    /** Used by server emit logic and client preview so plume segments stay visually continuous. */
+    /**
+     * Used by server emit logic and client preview so plume segments stay visually continuous.
+     */
     public static final double TARGET_PARTICLE_SPACING_BLOCKS = 0.5d;
-    /** Matches {@link PropulsionConfig} thruster particle multiplier defineInRange max (0–32). */
+    /**
+     * Matches {@link PropulsionConfig} thruster particle multiplier defineInRange max (0–32).
+     */
     protected static final double PARTICLE_MULTIPLIER_CAP = 32.0d;
     protected static final double OBSTRUCTION_RAY_START_EPSILON = 0.05d;
-    
+
     protected static final float LOWEST_POWER_THRESHOLD = 5.0f / 15.0f;
 
     //Common State
@@ -67,9 +77,17 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     //Ticking
     private int currentTick = 0;
 
-    protected double getParticleBroadcastRange() { return PARTICLE_BROADCAST_RANGE_BLOCKS; }
-    protected float getParticleVelocity() { return PARTICLE_VELOCITY; }
-    protected double getThrustUnitsPerKn() { return PropulsionConfig.getThrustUnitsPerKnOrDefault(); }
+    protected double getParticleBroadcastRange() {
+        return PARTICLE_BROADCAST_RANGE_BLOCKS;
+    }
+
+    protected float getParticleVelocity() {
+        return PARTICLE_VELOCITY;
+    }
+
+    protected double getThrustUnitsPerKn() {
+        return PropulsionConfig.getThrustUnitsPerKnOrDefault();
+    }
 
     protected double getParticleCountMultiplier() {
         return 1.0;
@@ -181,7 +199,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         // Minecraft returns VOID_AIR outside build limits, which causes the check to fail.
         boolean isOutsideWorldHeight = SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition);
         if (!isOutsideWorldHeight) {
-            if (SimulatedThrustAdapter.getBlockStateSafe(level,worldPosition).getBlock() != getBlockState().getBlock()) {
+            if (SimulatedThrustAdapter.getBlockStateSafe(level, worldPosition).getBlock() != getBlockState().getBlock()) {
                 this.setRemoved();
                 return;
             }
@@ -189,7 +207,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         super.tick();
         thrusterData.setDirection(getThrustDirectionLocal());
-        BlockState currentBlockState = isOutsideWorldHeight ? getBlockState() : SimulatedThrustAdapter.getBlockStateSafe(level,worldPosition);
+        BlockState currentBlockState = isOutsideWorldHeight ? getBlockState() : SimulatedThrustAdapter.getBlockStateSafe(level, worldPosition);
         if (level.isClientSide) {
             ThrusterSoundHooks.clientTick(this);
             return;
@@ -216,6 +234,14 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (isThrustDirty || currentTick % tick_rate == 0) {
             updateThrust(currentBlockState);
         }
+    }
+
+    /**
+     *
+     * @return if this thruster is a meshed plume or a particle only plume
+     */
+    public boolean isMeshedPlume() {
+        return false;
     }
 
     public abstract void updateThrust(BlockState currentBlockState);
@@ -259,8 +285,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return PropulsionConfig.DAMAGE_ENTITIES.get() && isPowered() && isWorking();
     }
 
-    protected void addSpecificGoggleInfo(List<Component> tooltip, boolean isPlayerSneaking) {}
-    
+    protected void addSpecificGoggleInfo(List<Component> tooltip, boolean isPlayerSneaking) {
+    }
+
     public Direction getFacing() {
         BlockState state = getBlockState();
         if (state.hasProperty(AbstractThrusterBlock.FACING)) {
@@ -288,12 +315,22 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public double getDisplayedAirflowMsForTooltip() {
         return getPower() * calculateObstructionEffect() * 200.0;
     }
-    protected float getFuelEfficiencyMultiplier() { return 1.0f; }
-    
-    public boolean isCreative() { return false; }
-    public boolean isIon() { return false; }
 
-    public String getDyeId() { return dyeId; }
+    protected float getFuelEfficiencyMultiplier() {
+        return 1.0f;
+    }
+
+    public boolean isCreative() {
+        return false;
+    }
+
+    public boolean isIon() {
+        return false;
+    }
+
+    public String getDyeId() {
+        return dyeId;
+    }
 
     public void setDyeId(String id) {
         this.dyeId = id;
@@ -304,12 +341,18 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public Integer getDyeColor() {
         return dyeId != null ? PropulsionConfig.getDyeColor(dyeId) : null;
     }
-    
-    public dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity.PlumeType getPlumeType() {
-        return dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity.PlumeType.NONE;
+
+    public CreativeThrusterBlockEntity.PlumeType getPlumeType() {
+        return CreativeThrusterBlockEntity.PlumeType.NONE;
     }
-    
-    public IFluidHandler getFluidHandler(Direction side) { return null; }
+
+    public boolean isBluePlume() {
+        return getPlumeType() == CreativeThrusterBlockEntity.PlumeType.ION;
+    }
+
+    public IFluidHandler getFluidHandler(Direction side) {
+        return null;
+    }
 
     protected boolean isPowered() {
         return getPower() > MathUtility.epsilon;
@@ -324,7 +367,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     public abstract double getNozzleOffsetFromCenter();
+
     protected abstract double getBaseThrust();
+
     protected abstract double getRawThrustCap();
 
     /**
@@ -345,7 +390,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (worldTop > sea + MathUtility.epsilon) {
             normalizedAltitude = org.joml.Math.clamp(0.0d, 1.0d, (y - sea) / (worldTop - sea));
         }
-        
+
         // Proxy for air pressure (1.0 at sea level, 0.0 at space/build limit)
         double airPressure = 1.0 - normalizedAltitude;
         double strength = org.joml.Math.clamp(0.0d, 2.0d, PropulsionConfig.ATMOSPHERIC_PRESSURE_AMOUNT.get());
@@ -396,9 +441,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return getLocalNozzlePosition(worldPosition, localExhaustDirection, currentNozzleOffset);
     }
 
-    public record WorldExhaustRay(Level level, Vec3 nozzlePos, Vec3 direction) {}
+    public record WorldExhaustRay(Level level, Vec3 nozzlePos, Vec3 direction) {
+    }
 
-    public record ObstructionRaySample(double firstHitDistance, int emptyBlocksEstimate) {}
+    public record ObstructionRaySample(double firstHitDistance, int emptyBlocksEstimate) {
+    }
 
     public WorldExhaustRay getWorldExhaustRay() {
         if (level == null) {
@@ -441,11 +488,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             Vec3 rayEnd = rayStart.add(localDir.scale(scanLength));
 
             ClipContext clipContext = new ClipContext(
-                rayStart,
-                rayEnd,
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                net.minecraft.world.phys.shapes.CollisionContext.empty()
+                    rayStart,
+                    rayEnd,
+                    ClipContext.Block.COLLIDER,
+                    ClipContext.Fluid.NONE,
+                    net.minecraft.world.phys.shapes.CollisionContext.empty()
             );
             BlockHitResult hitResult = level.clip(clipContext);
 
@@ -455,8 +502,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 firstHitDistance = Math.min(scanLength, rayStart.distanceTo(hitResult.getLocation()));
             }
             int emptyBlocksEstimate = hit
-                ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
-                : scanLength;
+                    ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
+                    : scanLength;
             return new ObstructionRaySample(firstHitDistance, emptyBlocksEstimate);
         }
 
@@ -469,11 +516,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         Vec3 rayEnd = rayStart.add(worldRay.direction().scale(scanLength));
 
         ClipContext clipContext = new ClipContext(
-            rayStart,
-            rayEnd,
-            ClipContext.Block.COLLIDER,
-            ClipContext.Fluid.NONE,
-            net.minecraft.world.phys.shapes.CollisionContext.empty()
+                rayStart,
+                rayEnd,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                net.minecraft.world.phys.shapes.CollisionContext.empty()
         );
         BlockHitResult hitResult = worldRay.level().clip(clipContext);
 
@@ -484,8 +531,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         int emptyBlocksEstimate = hit
-            ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
-            : scanLength;
+                ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
+                : scanLength;
         return new ObstructionRaySample(firstHitDistance, emptyBlocksEstimate);
     }
 
@@ -497,10 +544,21 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return false;
     }
 
-    public int getFuelAmountMb() { return 0; }
-    public int getFuelCapacityMb() { return 0; }
-    public boolean validFluid() { return false; }
-    public net.neoforged.neoforge.fluids.FluidStack fluidStack() { return net.neoforged.neoforge.fluids.FluidStack.EMPTY; }
+    public int getFuelAmountMb() {
+        return 0;
+    }
+
+    public int getFuelCapacityMb() {
+        return 0;
+    }
+
+    public boolean validFluid() {
+        return false;
+    }
+
+    public net.neoforged.neoforge.fluids.FluidStack fluidStack() {
+        return net.neoforged.neoforge.fluids.FluidStack.EMPTY;
+    }
 
     public boolean isActive() {
         return isPowered() && isWorking();
@@ -512,9 +570,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             return;
         }
 
-        final dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterForceProvider.ForceSample sample = 
-            dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterForceProvider.createSample(this, timeStep);
-            
+        final dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterForceProvider.ForceSample sample =
+                dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterForceProvider.createSample(this, timeStep);
+
         double scaledThrust = this.getCurrentThrust();
         if (scaledThrust <= 0.0d || !Double.isFinite(scaledThrust)) {
             return;
@@ -610,8 +668,24 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
     }
 
+    private void emitParticle(double spawnX, double spawnY, double spawnZ, Vector3d particleVelocity, ParticleOptions particleData) {
+        if (level instanceof ServerLevel serverLevel) {
+            double maxDistSq = getParticleBroadcastRange() * getParticleBroadcastRange();
+            for (ServerPlayer player : serverLevel.players()) {
+                if (player.distanceToSqr(spawnX, spawnY, spawnZ) > maxDistSq) {
+                    continue;
+                }
+                serverLevel.sendParticles(player, particleData, true, spawnX, spawnY, spawnZ, 0,
+                        particleVelocity.x, particleVelocity.y, particleVelocity.z, 1.0);
+            }
+        } else {
+            level.addParticle(particleData, true,
+                    spawnX, spawnY, spawnZ, particleVelocity.x, particleVelocity.y, particleVelocity.z);
+        }
+    }
+
     @SuppressWarnings("deprecation") // i hate compilers let me use ts
-    public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection){
+    public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection) {
         // Raycast in world space so sublevel thrusters correctly collide against real-world blocks.
         int oldEmptyBlocks = this.emptyBlocks;
         ObstructionRaySample sample = sampleObstructionRaycast(level, PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get());
@@ -655,8 +729,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         // Show efficiency based only on block obstruction (100 = no obstruction)
         CreateLang.builder()
-            .add(Component.translatable("createpropulsion.gui.goggles.thruster.efficiency")).text(": ").add(CreateLang.number(obstructionEfficiency)).add(CreateLang.text("%"))
-            .style(tooltipColor).forGoggles(tooltip);
+                .add(Component.translatable("createpropulsion.gui.goggles.thruster.efficiency")).text(": ").add(CreateLang.number(obstructionEfficiency)).add(CreateLang.text("%"))
+                .style(tooltipColor).forGoggles(tooltip);
 
         CreateLang.builder()
                 .add(Component.translatable("createpropulsion.gui.goggles.thruster.thrust_output"))
@@ -664,11 +738,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 .forGoggles(tooltip);
 
         CreateLang.builder()
-            .add(Component.literal("  "))
-            .add(Component.translatable("createpropulsion.tooltip.thrust1").withStyle(ChatFormatting.GRAY))
-            .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip() / getThrustUnitsPerKn())).withStyle(ChatFormatting.AQUA))
-            .add(Component.literal(" pN").withStyle(ChatFormatting.GRAY))
-            .forGoggles(tooltip);
+                .add(Component.literal("  "))
+                .add(Component.translatable("createpropulsion.tooltip.thrust1").withStyle(ChatFormatting.GRAY))
+                .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip() / getThrustUnitsPerKn())).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" pN").withStyle(ChatFormatting.GRAY))
+                .forGoggles(tooltip);
     }
 
 
@@ -677,7 +751,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         super.write(compound, registries, clientPacket);
         compound.putInt("emptyBlocks", emptyBlocks);
         compound.putInt("currentTick", currentTick);
-        
+
         compound.putInt("RedstoneInput", redstoneInput);
         compound.putFloat("DigitalInput", digitalInput);
         compound.putInt("ControlMode", controlMode.ordinal());

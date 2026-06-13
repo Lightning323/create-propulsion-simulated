@@ -3,6 +3,7 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.thruster;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
+import dev.eriksonn.aeronautics.content.particle.HotAirEmberParticleData;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.*;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
@@ -11,8 +12,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -348,12 +353,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public AABB getRenderBoundingBox() {
         if (isController() && isMultiblock()) {
-            return MeshedThrusterFlameUtils.extendRenderBoundingBox(this,
+            return MeshedThrusterFlameUtils.inflateRenderBoundingBox(this,
                     new AABB(
-                    worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-                    worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width),0);
+                            worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+                            worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width), 0);
         }
-        return MeshedThrusterFlameUtils.extendRenderBoundingBox(this, super.getRenderBoundingBox(),0);
+        return MeshedThrusterFlameUtils.inflateRenderBoundingBox(this, super.getRenderBoundingBox(), 0);
     }
 
     private boolean isFrontLayerCell(ThrusterBlockEntity ctrl, Direction cubeFacing) {

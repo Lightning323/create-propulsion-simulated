@@ -343,12 +343,14 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public boolean shouldEmitParticles() {
-        if (PropulsionConfig.isIonThrusterMeshedFlame()) return false;
-
         if (isMultiblock() && !isController()) {
             return false;
         }
         return getThrottle() > 0 && getTotalEnergyStoredFe() > 0;
+    }
+
+    public boolean isMeshedPlume() {
+        return PropulsionConfig.isIonThrusterMeshedFlame();
     }
 
     @Override

@@ -521,7 +521,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
         Direction facing = getBlockState().getValue(CreativeThrusterBlock.FACING);
         BlockPos plumeOccupiedPosition = worldPosition.relative(facing.getOpposite());
-        return !SimulatedThrustAdapter.getBlockStateSafe(level,plumeOccupiedPosition).isFaceSturdy(level, plumeOccupiedPosition, facing);
+        return !SimulatedThrustAdapter.getBlockStateSafe(level, plumeOccupiedPosition).isFaceSturdy(level, plumeOccupiedPosition, facing);
     }
 
     @Override
@@ -641,7 +641,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     @Override
     protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries,
-            boolean clientPacket) {
+                         boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putInt("plumeType", plumeType.ordinal());
         compound.putInt("Width", width);
@@ -657,7 +657,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     @Override
     protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries,
-            boolean clientPacket) {
+                        boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         width = Math.max(1, compound.getInt("Width"));
         if (compound.contains("plumeType")) {
