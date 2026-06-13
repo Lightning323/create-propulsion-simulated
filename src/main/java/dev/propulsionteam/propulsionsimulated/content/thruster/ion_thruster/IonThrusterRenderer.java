@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterRenderUtils;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorRedstoneLinkRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterRenderer;
@@ -27,7 +28,7 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
 
     @Override
     protected void renderSafe(IonThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-            int light, int overlay) {
+                              int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
         VectorThrusterDebugRenderer.render(be);
         if (be.isController() && be.isMultiblock()) {
@@ -37,6 +38,7 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
             VectorThrusterRenderer.render(vector, partialTicks, ms, buffer, light, overlay);
             VectorRedstoneLinkRenderer.renderOnBlockEntity(vector, partialTicks, ms, buffer, light, overlay);
         }
+        ThrusterRenderUtils.renderMeshFlame(be, partialTicks, ms, buffer, light, overlay);
     }
 
     private static void renderMultiblock(IonThrusterBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {

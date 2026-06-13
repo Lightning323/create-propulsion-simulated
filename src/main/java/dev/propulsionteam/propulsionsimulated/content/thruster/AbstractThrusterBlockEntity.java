@@ -13,6 +13,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
+import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
@@ -148,6 +149,12 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
         return redstoneInput / 15.0f;
     }
+
+    public float getThrottle() {
+        return getPower();
+    }
+
+    protected LerpedFloat powerInterpolated = LerpedFloat.linear().chase(0, 0.01, LerpedFloat.Chaser.LINEAR);
 
     public int getLegacyPowerInt() {
         return (int) Math.round(getPower() * 15);
@@ -356,9 +363,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return org.joml.Math.clamp(0.05d, 5.0d, 1.0d + (target - 1.0d) * strength);
     }
 
-    public float getThrottle() {
-        return getPower();
-    }
 
     public Vector3d getThrustDirectionLocal() {
         Direction facing = getFacing();

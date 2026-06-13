@@ -331,6 +331,8 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         return new IonParticleData(List.of(), getDyeColor(), null);
     }
 
+
+
     @Override
     protected boolean isWorking() {
         return getTotalEnergyStoredFe() > 0;
@@ -338,10 +340,11 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public boolean shouldEmitParticles() {
-        if (isMultiblock() && !isController()) {
-            return false;
-        }
-        return getThrottle() > 0 && getTotalEnergyStoredFe() > 0;
+        return false;//TODO: LIGHTNING NEEDS TO ADD CONFIGS TO
+//        if (isMultiblock() && !isController()) {
+//            return false;
+//        }
+//        return getThrottle() > 0 && getTotalEnergyStoredFe() > 0;
     }
 
     @Override
