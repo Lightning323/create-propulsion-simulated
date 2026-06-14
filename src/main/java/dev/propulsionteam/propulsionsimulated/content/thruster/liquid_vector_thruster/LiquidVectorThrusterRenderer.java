@@ -7,7 +7,7 @@ import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRende
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorRedstoneLinkRenderer;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,7 +38,7 @@ public class LiquidVectorThrusterRenderer extends SmartBlockEntityRenderer<Liqui
     @Override
     protected void renderSafe(LiquidVectorThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
-        VectorThrusterDebugRenderer.render(be);
+        ThrusterDebugRenderer.render(be, ms, buffer);
         renderBody(be, partialTicks, ms, buffer, light, overlay);
         VectorRedstoneLinkRenderer.renderOnBlockEntity(be, partialTicks, ms, buffer, light, overlay);
     }

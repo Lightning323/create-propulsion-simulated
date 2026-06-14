@@ -14,7 +14,6 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -113,7 +112,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Nullable
     public ThrusterBlockEntity getControllerBE() {
         if (isController() || !hasLevel()) return this;
-        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, controllerPos);
+        net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, controllerPos);
         return be instanceof ThrusterBlockEntity t ? t : null;
     }
 
@@ -185,7 +184,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     if (!state.is(expectedBlock)) return false;
                     if (!state.hasProperty(AbstractThrusterBlock.FACING)) return false;
                     if (state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
+                    net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return false;
                     if (expectedType == null) {
                         expectedType = t.getClass();
@@ -206,7 +205,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
+                    net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t && t.isMultiblock()) {
                         ThrusterBlockEntity ctrl = t.getControllerBE();
                         if (ctrl != null) ctrl.disassembleMulti();
@@ -222,7 +221,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
+                    net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return;
                     members.add(t);
                     if (pos.equals(origin)) controller = t;
@@ -273,7 +272,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
+                    net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) continue;
                     if (t.tank != null && !fuelPool.isEmpty()) {
                         int take = Math.min(getBaseTankCapacityMb(), fuelPool.getAmount());
@@ -524,7 +523,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
                     if (x == 0 && y == 0 && z == 0) continue;
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
+                    net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t) {
                         t.getThrusterData().setThrust(0);
                         t.isThrustDirty = false;
@@ -714,7 +713,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
                     if (x == 0 && y == 0 && z == 0) continue;
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
+                    net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t && t.redstoneInput > max) {
                         max = t.redstoneInput;
                     }
@@ -846,7 +845,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     if (!state.is(expectedBlock)) return false;
                     if (!state.hasProperty(AbstractThrusterBlock.FACING) || state.getValue(AbstractThrusterBlock.FACING) != facing)
                         return false;
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
+                    net.minecraft.world.level.block.entity.BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return false;
                     if (t.getClass() != expectedType) return false;
                     ThrusterBlockEntity ctrl = t.getControllerBE();

@@ -7,7 +7,7 @@ import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRende
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -24,7 +24,7 @@ public class ThrusterRenderer extends SmartBlockEntityRenderer<ThrusterBlockEnti
 
     @Override
     protected void renderSafe(ThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        VectorThrusterDebugRenderer.render(be);
+        ThrusterDebugRenderer.render(be, ms, buffer);
         if (be.isMultiblock()) {
             if (be.isController()) {
                 PartialModel model = getMultiblockModel(be.width);

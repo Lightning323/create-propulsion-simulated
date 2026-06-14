@@ -1,7 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 import com.mojang.serialization.MapCodec;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlock;

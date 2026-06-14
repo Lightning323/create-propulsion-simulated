@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -15,7 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils.debug_drawRenderBoundingBox;
 
 public final class VectorThrusterRenderer {
     private static final float PIVOT_X = 7.0f / 16.0f;
@@ -40,7 +40,7 @@ public final class VectorThrusterRenderer {
 
     public static void render(VectorThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         if (be == null || be.isRemoved()) return;
-        debug_drawRenderBoundingBox(be, ms, buffer);
+        ThrusterDebugRenderer.render(be, ms, buffer);
 
         BlockState state = be.getBlockState();
         if (!state.hasProperty(AbstractThrusterBlock.FACING)) return;

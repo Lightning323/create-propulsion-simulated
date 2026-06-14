@@ -5,13 +5,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorRedstoneLinkRenderer;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -31,7 +30,7 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
     protected void renderSafe(IonThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer,
                               int light, int overlay) {
         super.renderSafe(be, partialTick, ms, buffer, light, overlay);
-        VectorThrusterDebugRenderer.render(be);
+        ThrusterDebugRenderer.render(be, ms, buffer);
 
         if (be instanceof VectorThrusterBlockEntity vector) {
             VectorThrusterRenderer.render(vector, partialTick, ms, buffer, light, overlay);

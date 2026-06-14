@@ -6,29 +6,24 @@ import com.mojang.math.Axis;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
-import org.joml.Matrix3f;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
-import org.joml.Vector4f;
+import org.joml.*;
 
-import java.util.Optional;
+import java.lang.Math;
 
 public class MeshedThrusterFlameUtils {
 
@@ -37,18 +32,8 @@ public class MeshedThrusterFlameUtils {
     private static final float BLOCK_PIXEL = 1f / 16f;
     private static final float FLAME_PIXEL = BLOCK_PIXEL / FLAME_SIZE;
     protected static final float DISPLAY_THRESHOLD = 0.03f;
-    private static final float RENDER_BOX_FLAME_LENGTH = 6.0f;
+    public static final float RENDER_BOX_FLAME_LENGTH = 6.0f;
 
-    public static void debug_drawRenderBoundingBox(ThrusterBlockEntity be, PoseStack ms, MultiBufferSource buffer) {
-        //Debug render box
-//        ms.pushPose();
-//        ms.setIdentity();
-        AABB box = be.getRenderBoundingBox();
-        BlockPos pos2 = be.getBlockPos();
-        AABB localBox = box.move(-pos2.getX(), -pos2.getY(), -pos2.getZ());
-        LevelRenderer.renderLineBox(ms, buffer.getBuffer(RenderType.lines()), localBox, 1, 0, 0, 1);
-//        ms.popPose();
-    }
 
     public static void renderMultiblockFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int w) {
         final var state = be.getBlockState();
@@ -131,66 +116,57 @@ public class MeshedThrusterFlameUtils {
     }
 
     public static AABB inflateRenderBoundingBox(ThrusterBlockEntity be, AABB box) {
-        float partialTicks = Minecraft.getInstance()
-                .getTimer()
-                .getGameTimeDeltaPartialTick(false);
-        return inflateRenderBoundingBox(be, box, 0, 0, 1.0f, partialTicks);
+        final var state = be.getBlockState();
+        Vec3 center = box.getCenter();
+        float power = Mth.clamp(be.interpolatedPower.getValue(), 0f, 1f);
+        double length = power * RENDER_BOX_FLAME_LENGTH;
+
+        Vec3 flameEnd = switch (state.getValue(ThrusterBlock.FACING)) {
+            case DOWN -> new Vec3(center.x, box.maxY + length, center.z);
+            case UP -> new Vec3(center.x, box.minY - length, center.z);
+            case SOUTH -> new Vec3(center.x, center.y, box.minZ - length);
+            case NORTH -> new Vec3(center.x, center.y, box.maxZ + length);
+            case WEST -> new Vec3(box.maxX + length, center.y, center.z);
+            case EAST -> new Vec3(box.minX - length, center.y, center.z);
+        };
+        return fitPoint(box, flameEnd.x, flameEnd.y, flameEnd.z);
     }
 
-    /**
-     * Extends the render box in the direction of the thruster's meshed flame
-     *
-     * @param be
-     * @param box
-     * @return
-     */
-    public static AABB inflateRenderBoundingBox(ThrusterBlockEntity be, AABB box,
-                                                float widthInflationX, float widthInflationZ,
-                                                float lengthMultiplier, float partialTicks) {
-        if (be.isMeshedPlume() && be.interpolatedPower.getValue() < DISPLAY_THRESHOLD)
-            return box;
+    public static AABB inflateVectorRenderBoundingBox(VectorThrusterBlockEntity be, AABB box) {
+        Vec3 center = box.getCenter();
+        Direction dir = be.getBlockState().getValue(ThrusterBlock.FACING);
+        float rotX = be.getInterpolatedVectorX(1);
+        float rotY = be.getInterpolatedVectorY(1);
+        float power = Mth.clamp(be.interpolatedPower.getValue(), 0f, 1f);
+        double length = power * RENDER_BOX_FLAME_LENGTH;
 
-        float power = Mth.clamp(
-                be.interpolatedPower.getValue(partialTicks),
-                0f,
-                1f
+        Quaternionf rotation = new Quaternionf()
+                .rotateY((float) Math.toRadians(45));
+
+        Vector3f direction = new Vector3f(0, rotY, rotX);
+//        if (dir == Direction.UP) {
+//            direction.set(rotY, 0, rotX);
+//        } else if (dir == Direction.DOWN) {
+//            direction.set(0, 0, rotY);
+//        }
+        rotation.transform(direction);
+        Vector3d end = new Vector3d(center.x, center.y, center.z).fma(length, direction); // start + direction * length
+
+        System.out.println("rotx=" + rotX + " roty=" + rotY + " dir=" + direction + " flameEnd=" + end + " center=" + center);
+        return fitPoint(box, end.x, end.y, end.z);
+    }
+
+
+    public static AABB fitPoint(AABB box, double x, double y, double z) {
+        return new AABB(
+                Math.min(box.minX, x),
+                Math.min(box.minY, y),
+                Math.min(box.minZ, z),
+
+                Math.max(box.maxX, x),
+                Math.max(box.maxY, y),
+                Math.max(box.maxZ, z)
         );
-
-        Direction facing = be.getBlockState().getValue(ThrusterBlock.FACING);
-
-        double length = power * RENDER_BOX_FLAME_LENGTH * lengthMultiplier;
-        double widthX = power * widthInflationX;
-        double widthZ = power * widthInflationZ;
-
-        return switch (facing) {
-            case UP, DOWN -> new AABB(
-                    box.minX - widthX,
-                    facing == Direction.UP ? box.minY - length : box.minY,
-                    box.minZ - widthZ,
-
-                    box.maxX + widthX,
-                    facing == Direction.UP ? box.maxY : box.maxY + length,
-                    box.maxZ //+ width
-            );
-            case NORTH, SOUTH -> new AABB(
-                    box.minX - widthX,
-                    box.minY - widthZ,
-                    facing == Direction.SOUTH ? box.minZ - length : box.minZ,
-
-                    box.maxX + widthX,
-                    box.maxY + widthZ,
-                    facing == Direction.SOUTH ? box.maxZ : box.maxZ + length
-            );
-            case EAST, WEST -> new AABB(
-                    facing == Direction.EAST ? box.minX - length : box.minX,
-                    box.minY - widthX,
-                    box.minZ - widthZ,
-
-                    facing == Direction.EAST ? box.maxX : box.maxX + length,
-                    box.maxY + widthX,
-                    box.maxZ + widthZ
-            );
-        };
     }
 
 

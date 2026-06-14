@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster;
 
-import dev.engine_room.flywheel.api.model.Mesh;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDamager;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -8,7 +7,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
-import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
@@ -27,8 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -226,7 +222,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         for (int x = 0; x < width && remaining > 0; x++) {
             for (int y = 0; y < width && remaining > 0; y++) {
                 for (int z = 0; z < width && remaining > 0; z++) {
-                    BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
+                    net.minecraft.world.level.block.entity.BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (!(be instanceof IonThrusterBlockEntity ion)) {
                         continue;
                     }
@@ -252,7 +248,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
                     if (x == 0 && y == 0 && z == 0) continue;
-                    BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
+                    net.minecraft.world.level.block.entity.BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof IonThrusterBlockEntity ion) {
                         ion.getThrusterData().setThrust(0);
                         ion.lastConsumedFePerTick = fePerTick;
@@ -285,7 +281,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         for (int x = 0; x < width && remaining > 0; x++) {
             for (int y = 0; y < width && remaining > 0; y++) {
                 for (int z = 0; z < width && remaining > 0; z++) {
-                    BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
+                    net.minecraft.world.level.block.entity.BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (!(be instanceof IonThrusterBlockEntity ion)) {
                         continue;
                     }
@@ -510,7 +506,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
-                    BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
+                    net.minecraft.world.level.block.entity.BlockEntity be = dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof IonThrusterBlockEntity ion) {
                         total += ion.energyStored;
                     }
