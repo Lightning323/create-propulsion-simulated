@@ -28,19 +28,19 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
     }
 
     @Override
-    protected void renderSafe(IonThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+    protected void renderSafe(IonThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer,
                               int light, int overlay) {
-        super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
+        super.renderSafe(be, partialTick, ms, buffer, light, overlay);
         VectorThrusterDebugRenderer.render(be);
 
-        if (be.isMultiblock()) {
-            if (be.isController()) renderMultiblock(be, partialTicks, ms, buffer, light, overlay);
-        } else if (be.isMeshedPlume())
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, be.isBluePlume(), 0, 0, 0);
-
         if (be instanceof VectorThrusterBlockEntity vector) {
-            VectorThrusterRenderer.render(vector, partialTicks, ms, buffer, light, overlay);
-            VectorRedstoneLinkRenderer.renderOnBlockEntity(vector, partialTicks, ms, buffer, light, overlay);
+            VectorThrusterRenderer.render(vector, partialTick, ms, buffer, light, overlay);
+            VectorRedstoneLinkRenderer.renderOnBlockEntity(vector, partialTick, ms, buffer, light, overlay);
+        } else {
+            if (be.isMultiblock()) {
+                if (be.isController()) renderMultiblock(be, partialTick, ms, buffer, light, overlay);
+            } else if (be.isMeshedPlume())
+                MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer);
         }
     }
 
@@ -66,7 +66,7 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
 
         //Draw meshed thrusters
         if (be.isMeshedPlume()) {
-            MeshedThrusterFlameUtils.renderMultiblockFlame(be, partialTicks, ms, buffer, be.isBluePlume(), w);
+            MeshedThrusterFlameUtils.renderMultiblockFlame(be, partialTicks, ms, buffer, w);
         }
     }
 

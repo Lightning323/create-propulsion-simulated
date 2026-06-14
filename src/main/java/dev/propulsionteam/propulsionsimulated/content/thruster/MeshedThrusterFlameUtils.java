@@ -23,7 +23,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
+import org.joml.Matrix3f;
+import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.joml.Vector4f;
 
 import java.util.Optional;
 
@@ -43,14 +46,14 @@ public class MeshedThrusterFlameUtils {
         LevelRenderer.renderLineBox(ms, buffer.getBuffer(RenderType.lines()), localBox, 1, 0, 0, 1);
     }
 
-    public static void renderMultiblockFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, int w) {
+    public static void renderMultiblockFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int w) {
         final var state = be.getBlockState();
         final var facing = state.getValue(ThrusterBlock.FACING);
         Vector3i offset = new Vector3i(0, 0, 0);
         switch (facing) {
             case UP -> offset.set(-w + 1, 0, 0);//This is down
             case SOUTH -> offset.set(0, 0, 0);//this is north
-            case NORTH -> offset.set(0 , w-1, -w + 1);//this is south
+            case NORTH -> offset.set(0, w - 1, -w + 1);//this is south
             case WEST -> offset.set(-w + 1, 1, 0);//this is east
             case EAST -> offset.set(0, 0, 0);//this is west
             default -> {//this is up
@@ -60,12 +63,18 @@ public class MeshedThrusterFlameUtils {
 
         for (int x = 0; x < w; x++) {
             for (int z = 0; z < w; z++) {
-                MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, true, x + offset.x, offset.y, z + offset.z);
+                MeshedThrusterFlameUtils.renderMeshFlame(be, partialTicks, ms, buffer, be.isBluePlume(), x + offset.x, offset.y, z + offset.z, false);
+
             }
         }
     }
 
-    public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, boolean soulFlame, float offsetX, float offsetY, float offsetZ) {
+    public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer) {
+        renderMeshFlame(be, partialTicks, ms, buffer, be.isBluePlume(), 0, 0, 0, false);
+    }
+
+    public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+                                       boolean soulFlame, int offsetX, int offsetY, int offsetZ, boolean offsetPoseStack) {
         debug_drawRenderBoundingBox(be, ms, buffer);
         //Get the interpolated power
         float power = Mth.clamp(be.interpolatedPower.getValue(partialTicks), 0f, 1f);
@@ -85,7 +94,13 @@ public class MeshedThrusterFlameUtils {
         rotateTowardsFacing(ms, facing);
         ms.translate(offsetX, offsetY, offsetZ);
 
-        ms.mulPose(Axis.YP.rotation(getBillboardAngle(be, pos, facing, flameOffset, partialTicks)));
+
+        if (offsetPoseStack) {
+            float angle = getBillboardAngleV2(be, pos, ms, partialTicks);
+            ms.mulPose(Axis.YP.rotation(angle));
+        } else {
+            ms.mulPose(Axis.YP.rotation(getBillboardAngleV1(be, pos, facing, flameOffset, partialTicks)));
+        }
 
 
         final ShaderProgram shader = VeilRenderSystem.setShader(THRUSTER_FLAME_SHADER);
@@ -96,7 +111,11 @@ public class MeshedThrusterFlameUtils {
             ms.popPose();
             return;
         }
-        float shaderTime = (be.getLevel().getGameTime() + partialTicks) * 0.08f;
+        float r = random01(
+                (pos.getX() + offsetX) * 73856093
+                        ^ (pos.getY() + offsetY) * 19349663
+                        ^ (pos.getZ() + offsetZ) * 83492791);
+        float shaderTime = r + (be.getLevel().getGameTime() + partialTicks) * 0.08f;
         shader.getUniformSafe("FlameRenderTime").setFloat(shaderTime);
         shader.getUniformSafe("Intensity").setFloat(Mth.clamp(power * 2f - .35f, 0.25f, 1.5f));
         shader.getUniformSafe("Palette").setFloat(soulFlame ? 1 : 0); //Soul Fire modifier
@@ -107,8 +126,17 @@ public class MeshedThrusterFlameUtils {
         ms.popPose();
     }
 
+    public static float random01(long seed) {
+        long z = seed + 0x9E3779B97F4A7C15L;
+        z = (z ^ (z >>> 30)) * 0xBF58476D1CE4E5B9L;
+        z = (z ^ (z >>> 27)) * 0x94D049BB133111EBL;
+        z ^= z >>> 31;
+        return (float) ((z >>> 40) * (1.0 / (1L << 24)));
+    }
+
     /**
      * Extends the render box in the direction of the thruster's meshed flame
+     *
      * @param be
      * @param box
      * @param widthInflation the amount of extra thickness of the new bounding box, to account for vector thrusters
@@ -181,11 +209,40 @@ public class MeshedThrusterFlameUtils {
         }
     }
 
-    private static float getBillboardAngle(ThrusterBlockEntity be, BlockPos pos, Direction facing, float offset, float partialTicks) {
+    private static float getBillboardAngleV1(ThrusterBlockEntity be, BlockPos pos, Direction facing, float offset, float partialTicks) {
         final var origin = pos.getCenter().add(facing.getStepX() * offset, facing.getStepY() * offset, facing.getStepZ() * offset);
         final var toCamera = getCameraPos(be, partialTicks).subtract(origin);
         final var local = toLocalFacingSpace(toCamera, facing);
         return (float) Math.atan2(local.x, local.z);
+    }
+
+    private static float getBillboardAngleV2(//TODO: Make this one unified method when I figure out how to do this right
+                                             ThrusterBlockEntity be,
+                                             BlockPos pos,
+                                             PoseStack ms,
+                                             float partialTicks
+    ) {
+        // Actual billboard pivot in world space
+        Vector4f pivot = new Vector4f(0, 0, 0, 1);
+        ms.last().pose().transform(pivot);
+
+        Vec3 origin = new Vec3(
+                pos.getX() + pivot.x,
+                pos.getY() + pivot.y,
+                pos.getZ() + pivot.z
+        );
+
+        // Camera direction in world space
+        Vec3 toCamera = getCameraPos(be, partialTicks).subtract(origin);
+
+        // Convert into billboard-local space
+        Matrix3f invRot = new Matrix3f(ms.last().normal()).invert();
+
+        Vector3f local = toCamera.toVector3f();
+        invRot.transform(local);
+
+        // Rotation around local Y
+        return (float) Math.atan2(local.x(), local.z());
     }
 
     private static Vec3 toLocalFacingSpace(Vec3 vec, Direction facing) {

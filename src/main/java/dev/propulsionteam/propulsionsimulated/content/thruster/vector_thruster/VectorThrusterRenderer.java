@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -20,17 +21,17 @@ public final class VectorThrusterRenderer {
     private static final float PIVOT_Z = 1.0f / 16.0f;
 
     // Flap pivot points in block-local 0..1 space (matching model coords / 16)
-    private static final float FLAP_PIVOT_TOP_X    =  8.0f / 16.0f;
-    private static final float FLAP_PIVOT_TOP_Y    = 13.0f / 16.0f;
-    private static final float FLAP_PIVOT_BOTTOM_Y =  3.0f / 16.0f;
-    private static final float FLAP_PIVOT_LEFT_X   =  3.0f / 16.0f;
-    private static final float FLAP_PIVOT_RIGHT_X  = 13.0f / 16.0f;
-    private static final float FLAP_PIVOT_SIDE_Y   =  8.0f / 16.0f;
-    private static final float FLAP_PIVOT_Z        = 12.0f / 16.0f;
+    private static final float FLAP_PIVOT_TOP_X = 8.0f / 16.0f;
+    private static final float FLAP_PIVOT_TOP_Y = 13.0f / 16.0f;
+    private static final float FLAP_PIVOT_BOTTOM_Y = 3.0f / 16.0f;
+    private static final float FLAP_PIVOT_LEFT_X = 3.0f / 16.0f;
+    private static final float FLAP_PIVOT_RIGHT_X = 13.0f / 16.0f;
+    private static final float FLAP_PIVOT_SIDE_Y = 8.0f / 16.0f;
+    private static final float FLAP_PIVOT_Z = 12.0f / 16.0f;
 
     // Idle = ±22.5°, full throttle = ±12.5°; delta = 10°
-    private static final float FLAP_ANGLE_IDLE     = 22.5f;
-    private static final float FLAP_ANGLE_DELTA    = 30.0f;
+    private static final float FLAP_ANGLE_IDLE = 22.5f;
+    private static final float FLAP_ANGLE_DELTA = 30.0f;
 
     private VectorThrusterRenderer() {
     }
@@ -58,10 +59,10 @@ public final class VectorThrusterRenderer {
         PartialModel bodyModel = creative
                 ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_BODY
                 : PropulsionPartialModels.VECTOR_THRUSTER_BODY;
-        PartialModel flapTop    = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_TOP    : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_TOP;
+        PartialModel flapTop = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_TOP : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_TOP;
         PartialModel flapBottom = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_BOTTOM : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_BOTTOM;
-        PartialModel flapLeft   = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_LEFT   : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_LEFT;
-        PartialModel flapRight  = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_RIGHT  : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_RIGHT;
+        PartialModel flapLeft = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_LEFT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_LEFT;
+        PartialModel flapRight = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_RIGHT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_RIGHT;
 
         VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
 
@@ -99,8 +100,13 @@ public final class VectorThrusterRenderer {
         renderFlap(ms, vb, state, flapRight, light, overlay,
                 FLAP_PIVOT_RIGHT_X, FLAP_PIVOT_SIDE_Y, FLAP_PIVOT_Z,
                 Axis.YP, flapAngle);
-
+        if (be.isMeshedPlume()) {
+            ms.mulPose(Axis.YP.rotationDegrees(90));
+            ms.translate(-1, 0, 0);
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, be.isBluePlume(), 0, 0, 0, true);
+        }
         ms.popPose();
+
     }
 
     private static void renderFlap(PoseStack ms, VertexConsumer vb, BlockState state, PartialModel model,
@@ -117,12 +123,13 @@ public final class VectorThrusterRenderer {
 
     private static void applyFacingRotation(PoseStack ms, Direction facing) {
         switch (facing) {
-            case NORTH -> {}
+            case NORTH -> {
+            }
             case SOUTH -> ms.mulPose(Axis.YP.rotationDegrees(-180));
-            case WEST  -> ms.mulPose(Axis.YP.rotationDegrees(-270));
-            case EAST  -> ms.mulPose(Axis.YP.rotationDegrees(-90));
-            case UP    -> ms.mulPose(Axis.XP.rotationDegrees(-270));
-            case DOWN  -> ms.mulPose(Axis.XP.rotationDegrees(-90));
+            case WEST -> ms.mulPose(Axis.YP.rotationDegrees(-270));
+            case EAST -> ms.mulPose(Axis.YP.rotationDegrees(-90));
+            case UP -> ms.mulPose(Axis.XP.rotationDegrees(-270));
+            case DOWN -> ms.mulPose(Axis.XP.rotationDegrees(-90));
         }
     }
 }
