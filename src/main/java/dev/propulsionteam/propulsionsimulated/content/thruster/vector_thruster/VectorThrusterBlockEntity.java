@@ -159,12 +159,15 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         float partialTicks = Minecraft.getInstance()
                 .getTimer()
                 .getGameTimeDeltaPartialTick(false);
+
         float rotationAmt = Math.max(Math.abs(getInterpolatedVectorX(partialTicks)),
                 Math.abs(getInterpolatedVectorY(partialTicks)));
+
         return MeshedThrusterFlameUtils.inflateRenderBoundingBox(
                 this, super.getRenderBoundingBox(),
-                rotationAmt * 4.0f,
-                1.0f - (rotationAmt * 0.7f),
+                Math.abs(getInterpolatedVectorX(partialTicks)) * 3f,
+                Math.abs(getInterpolatedVectorY(partialTicks)) * 3f,
+                1.0f - (rotationAmt * 0.8f),
                 partialTicks);
     }
 

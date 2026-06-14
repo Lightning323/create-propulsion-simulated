@@ -36,7 +36,6 @@ import dev.ryanhcode.sable.Sable;
 import dev.propulsionteam.propulsionsimulated.utility.math.MathUtility;
 
 public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
-    public static final int BASE_MAX_THRUST = 600000;
     public static final int MAX_WIDTH = 3;
 
     public SmartFluidTankBehaviour tank;

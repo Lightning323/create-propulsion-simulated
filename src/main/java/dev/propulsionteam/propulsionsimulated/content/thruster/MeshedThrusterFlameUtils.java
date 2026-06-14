@@ -106,25 +106,19 @@ public class MeshedThrusterFlameUtils {
         }
 
         final ShaderProgram shader = VeilRenderSystem.setShader(THRUSTER_FLAME_SHADER);
-        Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(THRUSTER_FLAME_SHADER);
-
-        if (shader == null) {
-            System.out.println("Failed to set shader " + resource.isPresent());
-            ms.popPose();
-            return;
+        if (shader != null) {
+            float r = random01(
+                    (pos.getX() + offsetX) * 73856093
+                            ^ (pos.getY() + offsetY) * 19349663
+                            ^ (pos.getZ() + offsetZ) * 83492791);
+            float shaderTime = r + (be.getLevel().getGameTime() + partialTicks) * 0.1f;
+            shader.getUniformSafe("FlameRenderTime").setFloat(shaderTime);
+            shader.getUniformSafe("Intensity").setFloat(Mth.clamp(power * 2f - .35f, 0.25f, 1.5f));
+            shader.getUniformSafe("Palette").setFloat(soulFlame ? 1 : 0); //Soul Fire modifier
+            shader.getUniformSafe("LengthMultiplier").setFloat(Math.max(lengthMultiplier, FLAME_PIXEL));
+            shader.getUniformSafe("WidthMultiplier").setFloat(Math.max(widthMultiplier, FLAME_PIXEL));
+            renderFlame(ms, FLAME_SIZE, lengthMultiplier, widthMultiplier);
         }
-        float r = random01(
-                (pos.getX() + offsetX) * 73856093
-                        ^ (pos.getY() + offsetY) * 19349663
-                        ^ (pos.getZ() + offsetZ) * 83492791);
-        float shaderTime = r + (be.getLevel().getGameTime() + partialTicks) * 0.08f;
-        shader.getUniformSafe("FlameRenderTime").setFloat(shaderTime);
-        shader.getUniformSafe("Intensity").setFloat(Mth.clamp(power * 2f - .35f, 0.25f, 1.5f));
-        shader.getUniformSafe("Palette").setFloat(soulFlame ? 1 : 0); //Soul Fire modifier
-        shader.getUniformSafe("LengthMultiplier").setFloat(Math.max(lengthMultiplier, FLAME_PIXEL));
-        shader.getUniformSafe("WidthMultiplier").setFloat(Math.max(widthMultiplier, FLAME_PIXEL));
-
-        renderFlame(ms, FLAME_SIZE, lengthMultiplier, widthMultiplier);
         ms.popPose();
     }
 
@@ -140,7 +134,7 @@ public class MeshedThrusterFlameUtils {
         float partialTicks = Minecraft.getInstance()
                 .getTimer()
                 .getGameTimeDeltaPartialTick(false);
-        return inflateRenderBoundingBox(be, box, 0, 1.0f, partialTicks);
+        return inflateRenderBoundingBox(be, box, 0, 0, 1.0f, partialTicks);
     }
 
     /**
@@ -151,8 +145,8 @@ public class MeshedThrusterFlameUtils {
      * @return
      */
     public static AABB inflateRenderBoundingBox(ThrusterBlockEntity be, AABB box,
-                                                float widthInflation,
-                                                float lengthInflationMultiplier, float partialTicks) {
+                                                float widthInflationX, float widthInflationZ,
+                                                float lengthMultiplier, float partialTicks) {
         if (be.isMeshedPlume() && be.interpolatedPower.getValue() < DISPLAY_THRESHOLD)
             return box;
 
@@ -164,36 +158,37 @@ public class MeshedThrusterFlameUtils {
 
         Direction facing = be.getBlockState().getValue(ThrusterBlock.FACING);
 
-        double length = power * RENDER_BOX_FLAME_LENGTH * lengthInflationMultiplier;
-        double width = power * widthInflation;
+        double length = power * RENDER_BOX_FLAME_LENGTH * lengthMultiplier;
+        double widthX = power * widthInflationX;
+        double widthZ = power * widthInflationZ;
 
         return switch (facing) {
             case UP, DOWN -> new AABB(
-                    box.minX - width,
+                    box.minX - widthX,
                     facing == Direction.UP ? box.minY - length : box.minY,
-                    box.minZ - width,
+                    box.minZ - widthZ,
 
-                    box.maxX + width,
+                    box.maxX + widthX,
                     facing == Direction.UP ? box.maxY : box.maxY + length,
                     box.maxZ //+ width
             );
             case NORTH, SOUTH -> new AABB(
-                    box.minX - width,
-                    box.minY - width,
+                    box.minX - widthX,
+                    box.minY - widthZ,
                     facing == Direction.SOUTH ? box.minZ - length : box.minZ,
 
-                    box.maxX + width,
-                    box.maxY + width,
+                    box.maxX + widthX,
+                    box.maxY + widthZ,
                     facing == Direction.SOUTH ? box.maxZ : box.maxZ + length
             );
             case EAST, WEST -> new AABB(
                     facing == Direction.EAST ? box.minX - length : box.minX,
-                    box.minY - width,
-                    box.minZ - width,
+                    box.minY - widthX,
+                    box.minZ - widthZ,
 
                     facing == Direction.EAST ? box.maxX : box.maxX + length,
-                    box.maxY + width,
-                    box.maxZ + width
+                    box.maxY + widthX,
+                    box.maxZ + widthZ
             );
         };
     }
