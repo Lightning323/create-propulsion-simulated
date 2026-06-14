@@ -32,7 +32,7 @@ public class MeshedThrusterFlameUtils {
     private static final float BLOCK_PIXEL = 1f / 16f;
     private static final float FLAME_PIXEL = BLOCK_PIXEL / FLAME_SIZE;
     protected static final float DISPLAY_THRESHOLD = 0.03f;
-    public static final float RENDER_BOX_FLAME_LENGTH = 6.0f;
+    public static final float RENDER_BOX_FLAME_LENGTH = 5.0f;
 
 
     public static void renderMultiblockFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int w) {
@@ -135,24 +135,21 @@ public class MeshedThrusterFlameUtils {
     public static AABB inflateVectorRenderBoundingBox(VectorThrusterBlockEntity be, AABB box) {
         Vec3 center = box.getCenter();
         Direction dir = be.getBlockState().getValue(ThrusterBlock.FACING);
-        float rotX = be.getInterpolatedVectorX(1);
-        float rotY = be.getInterpolatedVectorY(1);
+        float rotX = be.getInterpolatedVectorX(1)*3;
+        float rotY = be.getInterpolatedVectorY(1)*3;
         float power = Mth.clamp(be.interpolatedPower.getValue(), 0f, 1f);
-        double length = power * RENDER_BOX_FLAME_LENGTH;
+        double length = power * RENDER_BOX_FLAME_LENGTH - Math.max(Math.abs(rotX),Math.abs(rotY))*2;
 
-        Quaternionf rotation = new Quaternionf()
-                .rotateY((float) Math.toRadians(45));
+        Vector3d end = switch (dir) {
+            case DOWN -> new Vector3d(center.x, box.maxY + length, center.z).add(rotX, 0, -rotY);
+            case UP -> new Vector3d(center.x, box.minY - length, center.z).add(-rotX, 0, -rotY);
+            case SOUTH -> new Vector3d(center.x, center.y, box.minZ - length).add(-rotX, rotY, 0);
+            case NORTH -> new Vector3d(center.x, center.y, box.maxZ + length).add(rotX, rotY, 0);
+            case WEST -> new Vector3d(box.maxX + length, center.y, center.z).add(0, rotY, -rotX);
+            case EAST -> new Vector3d(box.minX - length, center.y, center.z).add(0, rotY, rotX);
+        };
 
-        Vector3f direction = new Vector3f(0, rotY, rotX);
-//        if (dir == Direction.UP) {
-//            direction.set(rotY, 0, rotX);
-//        } else if (dir == Direction.DOWN) {
-//            direction.set(0, 0, rotY);
-//        }
-        rotation.transform(direction);
-        Vector3d end = new Vector3d(center.x, center.y, center.z).fma(length, direction); // start + direction * length
-
-        System.out.println("rotx=" + rotX + " roty=" + rotY + " dir=" + direction + " flameEnd=" + end + " center=" + center);
+        System.out.println("rotx=" + rotX + " roty=" + rotY + " flameEnd=" + end + " center=" + center);
         return fitPoint(box, end.x, end.y, end.z);
     }
 
