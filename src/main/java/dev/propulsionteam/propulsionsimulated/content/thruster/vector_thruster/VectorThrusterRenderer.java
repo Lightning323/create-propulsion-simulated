@@ -15,6 +15,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils.debug_drawRenderBoundingBox;
+
 public final class VectorThrusterRenderer {
     private static final float PIVOT_X = 7.0f / 16.0f;
     private static final float PIVOT_Y = 9.0f / 16.0f;
@@ -38,6 +40,7 @@ public final class VectorThrusterRenderer {
 
     public static void render(VectorThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         if (be == null || be.isRemoved()) return;
+        debug_drawRenderBoundingBox(be, ms, buffer);
 
         BlockState state = be.getBlockState();
         if (!state.hasProperty(AbstractThrusterBlock.FACING)) return;

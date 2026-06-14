@@ -37,13 +37,17 @@ public class MeshedThrusterFlameUtils {
     private static final float BLOCK_PIXEL = 1f / 16f;
     private static final float FLAME_PIXEL = BLOCK_PIXEL / FLAME_SIZE;
     protected static final float DISPLAY_THRESHOLD = 0.03f;
+    private static final float RENDER_BOX_FLAME_LENGTH = 6.0f;
 
-    private static void debug_drawRenderBoundingBox(ThrusterBlockEntity be, PoseStack ms, MultiBufferSource buffer) {
+    public static void debug_drawRenderBoundingBox(ThrusterBlockEntity be, PoseStack ms, MultiBufferSource buffer) {
         //Debug render box
+//        ms.pushPose();
+//        ms.setIdentity();
         AABB box = be.getRenderBoundingBox();
         BlockPos pos2 = be.getBlockPos();
         AABB localBox = box.move(-pos2.getX(), -pos2.getY(), -pos2.getZ());
         LevelRenderer.renderLineBox(ms, buffer.getBuffer(RenderType.lines()), localBox, 1, 0, 0, 1);
+//        ms.popPose();
     }
 
     public static void renderMultiblockFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int w) {
@@ -75,7 +79,7 @@ public class MeshedThrusterFlameUtils {
 
     public static void renderMeshFlame(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
                                        boolean soulFlame, int offsetX, int offsetY, int offsetZ, boolean offsetPoseStack) {
-        debug_drawRenderBoundingBox(be, ms, buffer);
+
         //Get the interpolated power
         float power = Mth.clamp(be.interpolatedPower.getValue(partialTicks), 0f, 1f);
 //        System.out.println("Interpolated power: " + power);
@@ -94,14 +98,12 @@ public class MeshedThrusterFlameUtils {
         rotateTowardsFacing(ms, facing);
         ms.translate(offsetX, offsetY, offsetZ);
 
-
-        if (offsetPoseStack) {
-            float angle = getBillboardAngleV2(be, pos, ms, partialTicks);
-            ms.mulPose(Axis.YP.rotation(angle));
+        if (offsetPoseStack) {//TODO: Fix this when I learn how to properly rotate the billboard
+            //V2 isnt really that bad, but It seemed like there was a bit of a tradeoff with how the billboard behaved
+            ms.mulPose(Axis.YP.rotation(getBillboardAngleV2(be, pos, ms, partialTicks)));
         } else {
             ms.mulPose(Axis.YP.rotation(getBillboardAngleV1(be, pos, facing, flameOffset, partialTicks)));
         }
-
 
         final ShaderProgram shader = VeilRenderSystem.setShader(THRUSTER_FLAME_SHADER);
         Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(THRUSTER_FLAME_SHADER);
@@ -134,25 +136,25 @@ public class MeshedThrusterFlameUtils {
         return (float) ((z >>> 40) * (1.0 / (1L << 24)));
     }
 
+    public static AABB inflateRenderBoundingBox(ThrusterBlockEntity be, AABB box) {
+        float partialTicks = Minecraft.getInstance()
+                .getTimer()
+                .getGameTimeDeltaPartialTick(false);
+        return inflateRenderBoundingBox(be, box, 0, 1.0f, partialTicks);
+    }
+
     /**
      * Extends the render box in the direction of the thruster's meshed flame
      *
      * @param be
      * @param box
-     * @param widthInflation the amount of extra thickness of the new bounding box, to account for vector thrusters
      * @return
      */
-    public static AABB inflateRenderBoundingBox(
-            ThrusterBlockEntity be,
-            AABB box,
-            int widthInflation
-    ) {
+    public static AABB inflateRenderBoundingBox(ThrusterBlockEntity be, AABB box,
+                                                float widthInflation,
+                                                float lengthInflationMultiplier, float partialTicks) {
         if (be.isMeshedPlume() && be.interpolatedPower.getValue() < DISPLAY_THRESHOLD)
             return box;
-
-        float partialTicks = Minecraft.getInstance()
-                .getTimer()
-                .getGameTimeDeltaPartialTick(false);
 
         float power = Mth.clamp(
                 be.interpolatedPower.getValue(partialTicks),
@@ -162,7 +164,7 @@ public class MeshedThrusterFlameUtils {
 
         Direction facing = be.getBlockState().getValue(ThrusterBlock.FACING);
 
-        double length = power * 8.0;
+        double length = power * RENDER_BOX_FLAME_LENGTH * lengthInflationMultiplier;
         double width = power * widthInflation;
 
         return switch (facing) {
@@ -173,7 +175,7 @@ public class MeshedThrusterFlameUtils {
 
                     box.maxX + width,
                     facing == Direction.UP ? box.maxY : box.maxY + length,
-                    box.maxZ + width
+                    box.maxZ //+ width
             );
             case NORTH, SOUTH -> new AABB(
                     box.minX - width,

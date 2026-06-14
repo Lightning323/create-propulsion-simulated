@@ -83,6 +83,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         return controllerPos == null;
     }
 
+    public boolean isMeshedPlume() {
+        return PropulsionConfig.isThrusterMeshedFlame();
+    }
+
 
     @Override
     public String getDyeId() {
@@ -350,9 +354,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return MeshedThrusterFlameUtils.inflateRenderBoundingBox(this,
                     new AABB(
                             worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-                            worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width), 0);
+                            worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width));
         }
-        return MeshedThrusterFlameUtils.inflateRenderBoundingBox(this, super.getRenderBoundingBox(), 0);
+        return MeshedThrusterFlameUtils.inflateRenderBoundingBox(this, super.getRenderBoundingBox());
     }
 
     private boolean isFrontLayerCell(ThrusterBlockEntity ctrl, Direction cubeFacing) {
