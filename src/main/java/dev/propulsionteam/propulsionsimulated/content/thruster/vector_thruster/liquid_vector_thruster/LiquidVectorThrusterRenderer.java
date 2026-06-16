@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

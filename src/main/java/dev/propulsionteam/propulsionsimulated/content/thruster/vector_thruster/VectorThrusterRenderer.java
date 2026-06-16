@@ -6,7 +6,7 @@ import com.mojang.math.Axis;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
@@ -104,11 +104,14 @@ public final class VectorThrusterRenderer {
         renderFlap(ms, vb, state, flapRight, light, overlay,
                 FLAP_PIVOT_RIGHT_X, FLAP_PIVOT_SIDE_Y, FLAP_PIVOT_Z,
                 Axis.YP, flapAngle);
+
+
         if (be.isMeshedPlume()) {
-            ms.mulPose(Axis.YP.rotationDegrees(90));
-            ms.translate(-1, 0, 0);
+//            ms.mulPose(Axis.YP.rotationDegrees(90));
+//            ms.translate(-1, 0, 0);
             MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, true);
         }
+
         ms.popPose();
 
     }

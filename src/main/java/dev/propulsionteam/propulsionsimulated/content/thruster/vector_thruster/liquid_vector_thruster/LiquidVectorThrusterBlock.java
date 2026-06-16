@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster;
 
 import com.mojang.serialization.MapCodec;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
