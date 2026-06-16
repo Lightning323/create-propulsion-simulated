@@ -9,6 +9,8 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRend
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -104,15 +106,28 @@ public final class VectorThrusterRenderer {
         renderFlap(ms, vb, state, flapRight, light, overlay,
                 FLAP_PIVOT_RIGHT_X, FLAP_PIVOT_SIDE_Y, FLAP_PIVOT_Z,
                 Axis.YP, flapAngle);
-
+        ms.popPose();
 
         if (be.isMeshedPlume()) {
-//            ms.mulPose(Axis.YP.rotationDegrees(90));
-//            ms.translate(-1, 0, 0);
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, true);
-        }
+            ms.pushPose();
+//            // Orient to block facing
+//            ms.translate(0.5, 0.5, 0.5);
+//            applyFacingRotation(ms, facing);
+//            ms.translate(-0.5, -0.5, -0.5);
 
-        ms.popPose();
+            ms.translate(0, -1, 0);
+
+            // Apply yaw/pitch tilt around the nozzle pivot
+            ms.translate(PIVOT_X, PIVOT_Y, PIVOT_Z);
+            ms.mulPose(Axis.YP.rotationDegrees(yawDegrees));
+            ms.mulPose(Axis.XP.rotationDegrees(pitchDegrees));
+            ms.translate(-PIVOT_X, -PIVOT_Y, -PIVOT_Z);
+
+            final ShaderProgram shader = VeilRenderSystem.setShader(MeshedThrusterFlameUtils.THRUSTER_FLAME_SHADER);
+
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, shader, be.isBluePlume(), 0, 1, 0, true);
+            ms.popPose();
+        }
 
     }
 

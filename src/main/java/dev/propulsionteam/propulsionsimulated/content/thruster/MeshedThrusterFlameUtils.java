@@ -26,7 +26,7 @@ import java.lang.Math;
 
 public class MeshedThrusterFlameUtils {
 
-    private static final ResourceLocation THRUSTER_FLAME_SHADER = CreatePropulsion.loc("thruster_flame");
+    public static final ResourceLocation THRUSTER_FLAME_SHADER = CreatePropulsion.loc("thruster_flame");
     private static final float FLAME_SIZE = 2f;
     private static final float BLOCK_PIXEL = 1f / 16f;
     private static final float FLAME_PIXEL = BLOCK_PIXEL / FLAME_SIZE;
@@ -143,13 +143,13 @@ public class MeshedThrusterFlameUtils {
 
     public static AABB inflateVectorRenderBoundingBox(VectorThrusterBlockEntity be, AABB box) {
         Vec3 center = box.getCenter();
-        Direction dir = be.getBlockState().getValue(ThrusterBlock.FACING);
+        Direction facing = be.getBlockState().getValue(ThrusterBlock.FACING);
         float rotX = be.getInterpolatedVectorX(1) * 3;
         float rotY = be.getInterpolatedVectorY(1) * 3;
         float power = Mth.clamp(be.interpolatedPower.getValue(), 0f, 1f);
         double length = power * RENDER_BOX_FLAME_LENGTH - Math.max(Math.abs(rotX), Math.abs(rotY)) * 2;
 
-        Vector3d end = switch (dir) {
+        Vector3d end = switch (facing) {
             case DOWN -> new Vector3d(center.x, box.maxY + length, center.z).add(rotX, 0, -rotY);
             case UP -> new Vector3d(center.x, box.minY - length, center.z).add(-rotX, 0, -rotY);
             case SOUTH -> new Vector3d(center.x, center.y, box.minZ - length).add(-rotX, rotY, 0);
