@@ -106,7 +106,7 @@ public final class VectorThrusterRenderer {
         if (be.isMeshedPlume()) {
             ms.mulPose(Axis.YP.rotationDegrees(90));
             ms.translate(-1, 0, 0);
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, be.isBluePlume(), 0, 0, 0, true);
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, true);
         }
         ms.popPose();
 

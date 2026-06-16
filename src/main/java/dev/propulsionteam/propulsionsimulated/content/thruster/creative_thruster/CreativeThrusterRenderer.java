@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
@@ -24,17 +25,25 @@ public class CreativeThrusterRenderer extends SmartBlockEntityRenderer<CreativeT
 
     @Override
     protected void renderSafe(final CreativeThrusterBlockEntity be,
-                              final float partialTicks,
+                              final float partialTick,
                               final PoseStack ms,
                               final MultiBufferSource buffer,
                               final int light,
                               final int overlay) {
         ThrusterDebugRenderer.render(be, ms, buffer);
         final BlockState state = be.getBlockState();
-        if (be.isController() && be.isMultiblock()) {
-            renderMultiblock(be, ms, buffer, light, overlay, state);
-            return;
+
+        //Rendering
+        if (be.isMultiblock()) {
+            if (be.isController()) {
+                renderMultiblock(be, partialTick, ms, buffer, light, overlay, state);
+                return;
+            }
+        } else {
+            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, false);
         }
+
+        //Visualization
         if (VisualizationManager.supportsVisualization(be.getLevel())) {
             return;
         }
@@ -64,6 +73,7 @@ public class CreativeThrusterRenderer extends SmartBlockEntityRenderer<CreativeT
     }
 
     private void renderMultiblock(final CreativeThrusterBlockEntity be,
+                                  final float partialTick,
                                   final PoseStack ms,
                                   final MultiBufferSource buffer,
                                   final int light,
@@ -85,6 +95,7 @@ public class CreativeThrusterRenderer extends SmartBlockEntityRenderer<CreativeT
         ms.scale(w, w, w);
         mb.light(light).overlay(overlay).renderInto(ms, vb);
         ms.popPose();
+        MeshedThrusterFlameUtils.renderMultiblockFlame(be, partialTick, ms, buffer, w);
     }
 
     private static PartialModel getMultiblockModel(int width) {
