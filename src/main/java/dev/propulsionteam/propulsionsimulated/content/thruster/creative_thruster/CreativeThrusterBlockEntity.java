@@ -4,6 +4,7 @@ import java.util.List;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.MeshedThrusterFlameUtils;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.particles.plasma.PlasmaParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
@@ -56,6 +57,12 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public CreativeThrusterBlockEntity(BlockPos pos, BlockState state) {
         this(PropulsionBlockEntities.CREATIVE_THRUSTER_BLOCK_ENTITY.get(), pos, state);
     }
+
+    public boolean isMeshedPlume() {
+        return PropulsionConfig.isThrusterMeshedFlame();
+    }
+
+
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
@@ -665,11 +672,12 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public AABB getRenderBoundingBox() {
         if (isController() && isMultiblock()) {
-            return new AABB(
-                    worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-                    worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width);
+            return MeshedThrusterFlameUtils.inflateRenderBoundingBox(this,
+                    new AABB(
+                            worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+                            worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width));
         }
-        return super.getRenderBoundingBox();
+        return MeshedThrusterFlameUtils.inflateRenderBoundingBox(this, super.getRenderBoundingBox());
     }
 
     @Override
