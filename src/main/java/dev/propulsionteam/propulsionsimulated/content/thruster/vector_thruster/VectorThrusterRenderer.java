@@ -36,6 +36,7 @@ public final class VectorThrusterRenderer {
     private static final float FLAP_ANGLE_DELTA = 30.0f;
 
     private VectorThrusterRenderer() {
+
     }
 
     public static void render(VectorThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {

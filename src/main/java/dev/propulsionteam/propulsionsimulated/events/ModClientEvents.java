@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.model.ModelSwapper;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerRenderer;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankModel;
+import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionSpriteShifts;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerVisual;
@@ -186,6 +187,7 @@ public class ModClientEvents {
         event.registerBlockEntityRenderer(PropulsionBlockEntities.THRUSTER_BLOCK_ENTITY.get(), ThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.ION_THRUSTER_BLOCK_ENTITY.get(), IonThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.LIQUID_VECTOR_THRUSTER_BLOCK_ENTITY.get(), LiquidVectorThrusterRenderer::new);
+        event.registerBlockEntityRenderer(PropulsionBlockEntities.SOLID_FUEL_THRUSTER_BLOCK_ENTITY.get(), SolidFuelThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get(), LiquidBurnerRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.TILT_ADAPTER_BLOCK_ENTITY.get(), TiltAdapterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.ADVANCED_TILT_ADAPTER_BLOCK_ENTITY.get(), TiltAdapterRenderer::new);
