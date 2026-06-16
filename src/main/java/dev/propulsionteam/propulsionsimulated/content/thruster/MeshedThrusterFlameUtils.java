@@ -75,7 +75,6 @@ public class MeshedThrusterFlameUtils {
     }
 
 
-
     public static void renderMeshFlame(AbstractThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
                                        ShaderProgram shader,
                                        boolean soulFlame, int offsetX, int offsetY, int offsetZ, boolean offsetPoseStack) {
@@ -112,6 +111,44 @@ public class MeshedThrusterFlameUtils {
             shader.getUniformSafe("LengthMultiplier").setFloat(Math.max(lengthMultiplier, FLAME_PIXEL));
             shader.getUniformSafe("WidthMultiplier").setFloat(Math.max(widthMultiplier, FLAME_PIXEL));
             renderFlame(ms, FLAME_SIZE, lengthMultiplier, widthMultiplier);
+            ms.popPose();
+        }
+    }
+
+
+    public static void renderMeshVectorFlame(AbstractThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+                                             ShaderProgram shader, boolean soulFlame) {
+        if (shader != null) {
+            //Get the interpolated power
+            float power = Mth.clamp(be.interpolatedPower.getValue(partialTicks), 0f, 1f);
+            if (power < DISPLAY_THRESHOLD) return;
+
+            final var state = be.getBlockState();
+            final var pos = be.getBlockPos();
+            final var facing = state.getValue(ThrusterBlock.FACING);
+            var flameOffset = snapToBlockPixel(-1.5f + ((24 - 4 * Mth.clamp(power, 0.5f, 1f)) / 16f));
+
+            ms.pushPose();
+            ms.translate(0.5f, 0.5f, 0.5f);
+//            ms.translate(facing.getStepX() * flameOffset, facing.getStepY() * flameOffset, facing.getStepZ() * flameOffset);
+            ms.mulPose(Axis.XP.rotation((float)Math.PI/2));
+//            rotateTowardsFacing(ms, facing);
+
+
+            var lengthMultiplier = snapToFlamePixel((power * 4f + 1f + (0.5f - power * power * power)));
+            var widthMultiplier = snapToFlamePixel((power * 1.5f + 1));
+
+            ms.mulPose(Axis.YP.rotation(getBillboardAngleV2(be, pos, ms, partialTicks)));
+            float r = random01( //Randomness of the flame to prevent flames next to each other from looking the same
+                    (pos.getX()) * 73856093L ^ (pos.getY()) * 19349663L ^ (pos.getZ()) * 83492791L);
+            float shaderTime = r + (be.getLevel().getGameTime() + partialTicks) * 0.1f;
+            shader.getUniformSafe("FlameRenderTime").setFloat(shaderTime);
+            shader.getUniformSafe("Intensity").setFloat(Mth.clamp(power * 2f - .35f, 0.25f, 1.5f));
+            shader.getUniformSafe("Palette").setFloat(soulFlame ? 1 : 0); //Soul Fire modifier
+            shader.getUniformSafe("LengthMultiplier").setFloat(Math.max(lengthMultiplier, FLAME_PIXEL));
+            shader.getUniformSafe("WidthMultiplier").setFloat(Math.max(widthMultiplier, FLAME_PIXEL));
+            renderFlame(ms, FLAME_SIZE, lengthMultiplier, widthMultiplier);
+
             ms.popPose();
         }
     }

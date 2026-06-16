@@ -110,12 +110,10 @@ public final class VectorThrusterRenderer {
 
         if (be.isMeshedPlume()) {
             ms.pushPose();
-//            // Orient to block facing
-//            ms.translate(0.5, 0.5, 0.5);
-//            applyFacingRotation(ms, facing);
-//            ms.translate(-0.5, -0.5, -0.5);
-
-            ms.translate(0, -1, 0);
+            // Orient to block facing
+            ms.translate(0.5, 0.5, 0.5);
+            applyFacingRotation(ms, facing);
+            ms.translate(-0.5, -0.5, -0.5);
 
             // Apply yaw/pitch tilt around the nozzle pivot
             ms.translate(PIVOT_X, PIVOT_Y, PIVOT_Z);
@@ -125,7 +123,8 @@ public final class VectorThrusterRenderer {
 
             final ShaderProgram shader = VeilRenderSystem.setShader(MeshedThrusterFlameUtils.THRUSTER_FLAME_SHADER);
 
-            MeshedThrusterFlameUtils.renderMeshFlame(be, partialTick, ms, buffer, shader, be.isBluePlume(), 0, 1, 0, true);
+            MeshedThrusterFlameUtils.renderMeshVectorFlame(be, partialTick, ms, buffer, shader,
+                    be.isBluePlume());
             ms.popPose();
         }
 
