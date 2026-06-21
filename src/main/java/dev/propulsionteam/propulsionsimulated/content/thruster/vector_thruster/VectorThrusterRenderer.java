@@ -41,11 +41,26 @@ public final class VectorThrusterRenderer {
 
     }
 
-    public static void render(VectorThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+    public static void renderThruster(VectorThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         if (be == null || be.isRemoved()) return;
         ThrusterDebugRenderer.render(be, ms, buffer);
 
         BlockState state = be.getBlockState();
+        boolean creative = be instanceof CreativeVectorThrusterBlockEntity;
+        PartialModel bodyModel = creative
+                ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_BODY
+                : PropulsionPartialModels.VECTOR_THRUSTER_BODY;
+        PartialModel flapTop = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_TOP : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_TOP;
+        PartialModel flapBottom = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_BOTTOM : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_BOTTOM;
+        PartialModel flapLeft = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_LEFT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_LEFT;
+        PartialModel flapRight = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_RIGHT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_RIGHT;
+
+        renderThruster(be, partialTick, ms, buffer, light, overlay, state, bodyModel, flapTop, flapBottom, flapLeft, flapRight);
+    }
+
+    public static void renderThruster(VectorThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer,
+                                      int light, int overlay, BlockState state,
+                                      PartialModel bodyModel, PartialModel flapTop, PartialModel flapBottom, PartialModel flapLeft, PartialModel flapRight) {
         if (!state.hasProperty(AbstractThrusterBlock.FACING)) return;
         Direction facing = state.getValue(AbstractThrusterBlock.FACING);
 
@@ -61,51 +76,21 @@ public final class VectorThrusterRenderer {
         float flapProgress = Mth.clamp(be.getInterpolatedFlapProgress(partialTick), 0.0f, 1.0f);
         float flapAngle = FLAP_ANGLE_IDLE - flapProgress * FLAP_ANGLE_DELTA;
 
-        boolean creative = be instanceof CreativeVectorThrusterBlockEntity;
-        PartialModel bodyModel = creative
-                ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_BODY
-                : PropulsionPartialModels.VECTOR_THRUSTER_BODY;
-        PartialModel flapTop = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_TOP : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_TOP;
-        PartialModel flapBottom = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_BOTTOM : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_BOTTOM;
-        PartialModel flapLeft = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_LEFT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_LEFT;
-        PartialModel flapRight = creative ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_FLAP_RIGHT : PropulsionPartialModels.VECTOR_THRUSTER_FLAP_RIGHT;
-
         VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
 
         ms.pushPose();
-        // Orient to block facing
         ms.translate(0.5, 0.5, 0.5);
         applyFacingRotation(ms, facing);
         ms.translate(-0.5, -0.5, -0.5);
-
-        // Apply yaw/pitch tilt around the nozzle pivot
         ms.translate(PIVOT_X, PIVOT_Y, PIVOT_Z);
         ms.mulPose(Axis.YP.rotationDegrees(yawDegrees));
         ms.mulPose(Axis.XP.rotationDegrees(pitchDegrees));
         ms.translate(-PIVOT_X, -PIVOT_Y, -PIVOT_Z);
-
-        // Render static body parts (exhaust, base, connector)
         CachedBuffers.partial(bodyModel, state).light(light).overlay(overlay).renderInto(ms, vb);
-
-        // Top flap: -flapAngle around X at (8/16, 13/16, 12/16)
-        renderFlap(ms, vb, state, flapTop, light, overlay,
-                FLAP_PIVOT_TOP_X, FLAP_PIVOT_TOP_Y, FLAP_PIVOT_Z,
-                Axis.XP, -flapAngle);
-
-        // Bottom flap: +flapAngle around X at (8/16, 3/16, 12/16)
-        renderFlap(ms, vb, state, flapBottom, light, overlay,
-                FLAP_PIVOT_TOP_X, FLAP_PIVOT_BOTTOM_Y, FLAP_PIVOT_Z,
-                Axis.XP, flapAngle);
-
-        // Left flap: -flapAngle around Y at (3/16, 8/16, 12/16)
-        renderFlap(ms, vb, state, flapLeft, light, overlay,
-                FLAP_PIVOT_LEFT_X, FLAP_PIVOT_SIDE_Y, FLAP_PIVOT_Z,
-                Axis.YP, -flapAngle);
-
-        // Right flap: +flapAngle around Y at (13/16, 8/16, 12/16)
-        renderFlap(ms, vb, state, flapRight, light, overlay,
-                FLAP_PIVOT_RIGHT_X, FLAP_PIVOT_SIDE_Y, FLAP_PIVOT_Z,
-                Axis.YP, flapAngle);
+        renderFlap(ms, vb, state, flapTop, light, overlay, FLAP_PIVOT_TOP_X, FLAP_PIVOT_TOP_Y, FLAP_PIVOT_Z, Axis.XP, -flapAngle);
+        renderFlap(ms, vb, state, flapBottom, light, overlay, FLAP_PIVOT_TOP_X, FLAP_PIVOT_BOTTOM_Y, FLAP_PIVOT_Z, Axis.XP, flapAngle);
+        renderFlap(ms, vb, state, flapLeft, light, overlay, FLAP_PIVOT_LEFT_X, FLAP_PIVOT_SIDE_Y, FLAP_PIVOT_Z, Axis.YP, -flapAngle);
+        renderFlap(ms, vb, state, flapRight, light, overlay, FLAP_PIVOT_RIGHT_X, FLAP_PIVOT_SIDE_Y, FLAP_PIVOT_Z, Axis.YP, flapAngle);
         ms.popPose();
 
         if (be.isMeshedPlume()) {
@@ -127,7 +112,6 @@ public final class VectorThrusterRenderer {
                     be.isBluePlume());
             ms.popPose();
         }
-
     }
 
     private static void renderFlap(PoseStack ms, VertexConsumer vb, BlockState state, PartialModel model,
