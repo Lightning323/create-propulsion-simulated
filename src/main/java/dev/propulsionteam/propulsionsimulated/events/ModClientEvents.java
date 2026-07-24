@@ -15,8 +15,6 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.Liquid
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineRenderer;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineVisual;
 import dev.propulsionteam.propulsionsimulated.ponder.DeltaPonderPlugin;
-import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionRenderer;
-import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionVisual;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionInstanceTypes;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterRenderer;
@@ -169,11 +167,6 @@ public class ModClientEvents {
             .skipVanillaRender(be -> VisualizationManager.supportsVisualization(be.getLevel()))
             .apply();
 
-        SimpleBlockEntityVisualizer.builder(PropulsionBlockEntities.REDSTONE_TRANSMISSION_BLOCK_ENTITY.get())
-            .factory(RedstoneTransmissionVisual::new)
-            .skipVanillaRender(be -> VisualizationManager.supportsVisualization(be.getLevel()))
-            .apply();
-
         SimpleBlockEntityVisualizer.builder(PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get())
             .factory(LiquidBurnerVisual::new)
             .skipVanillaRender(be -> VisualizationManager.supportsVisualization(be.getLevel()))
@@ -183,7 +176,6 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(PropulsionBlockEntities.STIRLING_ENGINE_BLOCK_ENTITY.get(), StirlingEngineRenderer::new);
-        event.registerBlockEntityRenderer(PropulsionBlockEntities.REDSTONE_TRANSMISSION_BLOCK_ENTITY.get(), RedstoneTransmissionRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.CREATIVE_THRUSTER_BLOCK_ENTITY.get(), CreativeThrusterRenderer::new);
 
         event.registerBlockEntityRenderer(PropulsionBlockEntities.THRUSTER_BLOCK_ENTITY.get(), ThrusterRenderer::new);

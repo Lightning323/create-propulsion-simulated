@@ -120,11 +120,7 @@ public class ModCapabilityEvents {
                 PropulsionBlockEntities.STIRLING_ENGINE_BLOCK_ENTITY.get(),
                 (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
             );
-            event.registerBlockEntity(
-                capability,
-                PropulsionBlockEntities.REDSTONE_TRANSMISSION_BLOCK_ENTITY.get(),
-                (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
-            );
+
             event.registerBlockEntity(
                 capability,
                 PropulsionBlockEntities.TILT_ADAPTER_BLOCK_ENTITY.get(),

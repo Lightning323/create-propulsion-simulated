@@ -14,7 +14,6 @@ import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVess
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVesselItem;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumCasingBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_converter.RedstoneConverterBlock;
-import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.AdvancedTiltAdapterBlock;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlock;
@@ -61,9 +60,7 @@ public class PropulsionBlocks {
     public static final DeferredBlock<RedstoneConverterBlock> REDSTONE_CONVERTER_BLOCK = BLOCKS.register("redstone_converter",
         () -> new RedstoneConverterBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .sound(SoundType.METAL).instabreak()));
-    public static final DeferredBlock<RedstoneTransmissionBlock> REDSTONE_TRANSMISSION_BLOCK = BLOCKS.register("redstone_transmission",
-        () -> new RedstoneTransmissionBlock(Block.Properties.of().mapColor(MapColor.PODZOL)
-            .sound(SoundType.METAL).strength(2.5f, 2.0f).noOcclusion()));
+
     public static final DeferredBlock<SolidBurnerBlock> SOLID_BURNER = BLOCKS.register("solid_burner",
         () -> new SolidBurnerBlock(Block.Properties.of().mapColor(MapColor.STONE).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).lightLevel(s -> s.getValue(SolidBurnerBlock.LIT) ? 13 : 0)));
@@ -134,7 +131,7 @@ public class PropulsionBlocks {
         registerBlockItem("liquid_vector_thruster", LIQUID_VECTOR_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.UNCOMMON));
         registerBlockItem("creative_vector_thruster", CREATIVE_VECTOR_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.EPIC));
         registerDefaultBlockItem("redstone_converter", REDSTONE_CONVERTER_BLOCK);
-        registerDefaultBlockItem("redstone_transmission", REDSTONE_TRANSMISSION_BLOCK);
+
         registerDefaultBlockItem("solid_burner", SOLID_BURNER);
         registerDefaultBlockItem("liquid_burner", LIQUID_BURNER);
         registerDefaultBlockItem("stirling_engine", STIRLING_ENGINE_BLOCK);

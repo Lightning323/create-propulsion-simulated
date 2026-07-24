@@ -18,7 +18,6 @@ import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.AdvancedTiltA
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.redstone_converter.RedstoneConverterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.wing.PropulsionCopycatWingBlockEntity;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 
@@ -60,10 +59,6 @@ public class PropulsionBlockEntities {
         BLOCK_ENTITY_TYPES.register("redstone_converter_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new RedstoneConverterBlockEntity(pos, state),
                 PropulsionBlocks.REDSTONE_CONVERTER_BLOCK.get()).build(null));
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneTransmissionBlockEntity>> REDSTONE_TRANSMISSION_BLOCK_ENTITY =
-        BLOCK_ENTITY_TYPES.register("redstone_transmission_block_entity",
-            () -> BlockEntityType.Builder.of((pos, state) -> new RedstoneTransmissionBlockEntity(pos, state), PropulsionBlocks.REDSTONE_TRANSMISSION_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolidBurnerBlockEntity>> SOLID_BURNER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("solid_burner_block_entity",

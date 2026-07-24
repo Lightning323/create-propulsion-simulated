@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
@@ -43,7 +42,6 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
         register(CreativeThrusterBlockEntity.class, CreativeThrusterPeripheral::new);
         register(CoralGeneratorBlockEntity.class, CoralGeneratorPeripheral::new);
         register(StirlingEngineBlockEntity.class, StirlingEnginePeripheral::new);
-        register(RedstoneTransmissionBlockEntity.class, RedstoneTransmissionPeripheral::new);
         register(TiltAdapterBlockEntity.class, TiltAdapterPeripheral::new);
     }
 
