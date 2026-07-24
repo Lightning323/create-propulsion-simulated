@@ -14,8 +14,6 @@ import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVess
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVesselItem;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumCasingBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_converter.RedstoneConverterBlock;
-import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.AdvancedTiltAdapterBlock;
-import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster.CreativeVectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlock;
@@ -70,12 +68,6 @@ public class PropulsionBlocks {
     public static final DeferredBlock<StirlingEngineBlock> STIRLING_ENGINE_BLOCK = BLOCKS.register("stirling_engine",
         () -> new StirlingEngineBlock(Block.Properties.of().mapColor(MapColor.STONE).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<TiltAdapterBlock> TILT_ADAPTER_BLOCK = BLOCKS.register("tilt_adapter",
-        () -> new TiltAdapterBlock(Block.Properties.of().mapColor(MapColor.PODZOL)
-            .sound(SoundType.METAL).strength(2.5f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<AdvancedTiltAdapterBlock> ADVANCED_TILT_ADAPTER_BLOCK = BLOCKS.register("advanced_tilt_adapter",
-        () -> new AdvancedTiltAdapterBlock(Block.Properties.of().mapColor(MapColor.PODZOL)
-            .sound(SoundType.METAL).requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion()));
 
     public static final DeferredBlock<WingBlock> WING_BLOCK = BLOCKS.register("wing",
         () -> new WingBlock(Block.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).sound(SoundType.COPPER)
@@ -135,8 +127,6 @@ public class PropulsionBlocks {
         registerDefaultBlockItem("solid_burner", SOLID_BURNER);
         registerDefaultBlockItem("liquid_burner", LIQUID_BURNER);
         registerDefaultBlockItem("stirling_engine", STIRLING_ENGINE_BLOCK);
-        registerDefaultBlockItem("tilt_adapter", TILT_ADAPTER_BLOCK);
-        registerDefaultBlockItem("advanced_tilt_adapter", ADVANCED_TILT_ADAPTER_BLOCK);
         registerDefaultBlockItem("wing", WING_BLOCK);
         registerDefaultBlockItem("tempered_wing", TEMPERED_WING_BLOCK);
         BLOCK_ITEMS.register("copycat_wing", () -> new CopycatWingItem(COPYCAT_WING.get(), new BlockItem.Properties()));

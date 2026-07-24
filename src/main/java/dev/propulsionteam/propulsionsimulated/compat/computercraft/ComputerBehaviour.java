@@ -15,7 +15,6 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonT
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -42,7 +41,6 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
         register(CreativeThrusterBlockEntity.class, CreativeThrusterPeripheral::new);
         register(CoralGeneratorBlockEntity.class, CoralGeneratorPeripheral::new);
         register(StirlingEngineBlockEntity.class, StirlingEnginePeripheral::new);
-        register(TiltAdapterBlockEntity.class, TiltAdapterPeripheral::new);
     }
 
     public ComputerBehaviour(SmartBlockEntity blockEntity) {
