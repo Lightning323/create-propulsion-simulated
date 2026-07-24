@@ -1,0 +1,9 @@
+{
+  "values": [
+    "createkinetic:optical_lens",
+    "createkinetic:fluid_lens",
+    "createkinetic:focus_lens",
+    "createkinetic:invisibility_lens",
+    "createkinetic:unfinished_lens"
+  ]
+}
