@@ -22,7 +22,6 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.c
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingItem;
@@ -55,9 +54,6 @@ public class PropulsionBlocks {
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
     public static final DeferredBlock<LiquidVectorThrusterBlock> LIQUID_VECTOR_THRUSTER_BLOCK = BLOCKS.register("liquid_vector_thruster",
         () -> new LiquidVectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
-            .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
-    public static final DeferredBlock<SolidFuelThrusterBlock> SOLID_FUEL_THRUSTER_BLOCK = BLOCKS.register("solid_fuel_thruster",
-        () -> new SolidFuelThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
     public static final DeferredBlock<CreativeVectorThrusterBlock> CREATIVE_VECTOR_THRUSTER_BLOCK = BLOCKS.register("creative_vector_thruster",
         () -> new CreativeVectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL)
@@ -136,7 +132,6 @@ public class PropulsionBlocks {
         registerBlockItem("ion_thruster", ION_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.UNCOMMON));
         registerBlockItem("vector_thruster", VECTOR_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.UNCOMMON));
         registerBlockItem("liquid_vector_thruster", LIQUID_VECTOR_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.UNCOMMON));
-        registerDefaultBlockItem("solid_fuel_thruster", SOLID_FUEL_THRUSTER_BLOCK);
         registerBlockItem("creative_vector_thruster", CREATIVE_VECTOR_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.EPIC));
         registerDefaultBlockItem("redstone_converter", REDSTONE_CONVERTER_BLOCK);
         registerDefaultBlockItem("redstone_transmission", REDSTONE_TRANSMISSION_BLOCK);
