@@ -3,7 +3,6 @@
   "values": [
     "createpropulsion:copycat_wing",
     "createpropulsion:copycat_wing_8",
-    "createpropulsion:redstone_converter",
-    "createpropulsion:cable"
+    "createpropulsion:redstone_converter"
   ]
 }

@@ -1,10 +1,8 @@
 package dev.propulsionteam.propulsionsimulated.events;
 
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
-import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
-import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
@@ -66,17 +64,6 @@ public class ModCapabilityEvents {
             PropulsionBlockEntities.CORAL_GENERATOR_BLOCK_ENTITY.get(),
             (be, side) -> ((CoralGeneratorBlockEntity) be).getEnergyHandler(side)
         );
-        event.registerBlockEntity(
-            Capabilities.EnergyStorage.BLOCK,
-            PropulsionBlockEntities.CABLE_HUB_BLOCK_ENTITY.get(),
-            (be, side) -> ((CableHubBlockEntity) be).getEnergyHandler(side)
-        );
-        event.registerBlockEntity(
-            Capabilities.EnergyStorage.BLOCK,
-            PropulsionBlockEntities.FE_CABLE_BLOCK_ENTITY.get(),
-            (be, side) -> ((FeCableBlockEntity) be).getEnergyHandler(side)
-        );
-
         registerComputerCraftCapabilitiesIfAvailable(event);
     }
 

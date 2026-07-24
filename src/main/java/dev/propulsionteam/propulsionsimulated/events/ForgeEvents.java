@@ -4,7 +4,6 @@ import com.simibubi.create.content.equipment.armor.NetheriteDivingHandler;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorFuelManager;
 import dev.propulsionteam.propulsionsimulated.network.PropulsionPackets;
-import dev.propulsionteam.propulsionsimulated.network.SyncSolidThrusterFuelsPacket;
 import dev.propulsionteam.propulsionsimulated.network.SyncThrusterFuelsPacket;
 import dev.propulsionteam.propulsionsimulated.content.thruster.SolidThrusterFuelManager;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionCommands;
@@ -64,10 +63,6 @@ public class ForgeEvents {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             PropulsionPackets.sendToPlayer(
                 SyncThrusterFuelsPacket.create(ThrusterFuelManager.getFuelPropertiesMap(), ThrusterFuelManager.getRemovedFuelIds()),
-                serverPlayer
-            );
-            PropulsionPackets.sendToPlayer(
-                SyncSolidThrusterFuelsPacket.create(SolidThrusterFuelManager.getFuelPropertiesMap(), SolidThrusterFuelManager.getRemovedFuelIds()),
                 serverPlayer
             );
         }

@@ -3,10 +3,7 @@ package dev.propulsionteam.propulsionsimulated.registries;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlock;
-import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlock;
-import dev.propulsionteam.propulsionsimulated.content.cable.relay.CableRelayBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankItem;
@@ -105,15 +102,7 @@ public class PropulsionBlocks {
     public static final DeferredBlock<CoralGeneratorBlock> CORAL_GENERATOR = BLOCKS.register("coral_generator",
         () -> new CoralGeneratorBlock(Block.Properties.of().mapColor(MapColor.COLOR_CYAN).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(3.5f, 3.0f).noOcclusion()));
-    public static final DeferredBlock<FeCableBlock> FE_CABLE = BLOCKS.register("cable",
-        () -> new FeCableBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
-            .requiresCorrectToolForDrops().strength(1.75f, 2.0f).noOcclusion()));
-    public static final DeferredBlock<CableHubBlock> CABLE_HUB = BLOCKS.register("cable_hub",
-        () -> new CableHubBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
-            .requiresCorrectToolForDrops().strength(2.5f, 3.5f).noOcclusion()));
-    public static final DeferredBlock<CableRelayBlock> CABLE_RELAY = BLOCKS.register("cable_relay",
-        () -> new CableRelayBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
-            .requiresCorrectToolForDrops().strength(2.5f, 3.5f)));
+
 
     static {
         registerDefaultBlockItem("thruster", THRUSTER_BLOCK);
@@ -140,9 +129,7 @@ public class PropulsionBlocks {
         BLOCK_ITEMS.register("platinum_fluid_tank", () -> new PlatinumFluidTankItem(PLATINUM_FLUID_TANK.get(), new BlockItem.Properties()));
         BLOCK_ITEMS.register("platinum_fluid_vessel", () -> new PlatinumFluidVesselItem(PLATINUM_FLUID_VESSEL.get(), new BlockItem.Properties()));
         registerBlockItem("coral_generator", CORAL_GENERATOR, new BlockItem.Properties().rarity(Rarity.RARE));
-        registerDefaultBlockItem("cable", FE_CABLE);
-        registerDefaultBlockItem("cable_hub", CABLE_HUB);
-        registerDefaultBlockItem("cable_relay", CABLE_RELAY);
+
 
         PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "redstone_transmission"), 0, false);
         PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "tilt_adapter"), 0, false);

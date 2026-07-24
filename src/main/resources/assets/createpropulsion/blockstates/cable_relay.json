@@ -1,6 +1,0 @@
-{
-  "variants": {
-    "powered=false": { "model": "createpropulsion:block/cable_relay" },
-    "powered=true":  { "model": "createpropulsion:block/cable_relay_powered" }
-  }
-}

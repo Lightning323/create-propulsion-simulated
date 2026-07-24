@@ -21,7 +21,6 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
-import dev.propulsionteam.propulsionsimulated.network.SyncSolidThrusterFuelsPacket;
 import dev.propulsionteam.propulsionsimulated.network.PropulsionPackets;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -152,9 +151,6 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
         logReloadSummary("datapack_reload", result);
         profiler.pop();
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server != null && server.isRunning()) {
-            PropulsionPackets.sendToAll(SyncSolidThrusterFuelsPacket.create(getFuelPropertiesMap(), getRemovedFuelIds()));
-        }
     }
 
     public static void updateClient(Map<ResourceLocation, ItemThrusterProperties> fuelMap, Set<ResourceLocation> removed) {
@@ -314,9 +310,6 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
 
     private static void syncToClients() {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server != null && server.isRunning()) {
-            PropulsionPackets.sendToAll(SyncSolidThrusterFuelsPacket.create(getFuelPropertiesMap(), getRemovedFuelIds()));
-        }
     }
 
     private static void logReloadSummary(String context, ParseResult result) {
