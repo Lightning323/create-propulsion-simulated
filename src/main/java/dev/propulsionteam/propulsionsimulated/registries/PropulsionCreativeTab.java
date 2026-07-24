@@ -32,18 +32,9 @@ public class PropulsionCreativeTab {
         registerSectionItem(MAIN_SECTION, "solid_burner", () -> PropulsionBlocks.SOLID_BURNER.get().asItem());
         registerSectionItem(MAIN_SECTION, "liquid_burner", () -> PropulsionBlocks.LIQUID_BURNER.get().asItem());
         registerSectionItem(MAIN_SECTION, "stirling_engine", () -> PropulsionBlocks.STIRLING_ENGINE_BLOCK.get().asItem());
-        registerSectionItem(MAIN_SECTION, "platinum_ore", () -> PropulsionBlocks.PLATINUM_ORE.get().asItem());
-        registerSectionItem(MAIN_SECTION, "deepslate_platinum_ore", () -> PropulsionBlocks.DEEPSLATE_PLATINUM_ORE.get().asItem());
-        registerSectionItem(MAIN_SECTION, "platinum_block", () -> PropulsionBlocks.PLATINUM_BLOCK.get().asItem());
-        registerSectionItem(MAIN_SECTION, "raw_platinum_block", () -> PropulsionBlocks.RAW_PLATINUM_BLOCK.get().asItem());
-        registerSectionItem(MAIN_SECTION, "platinum_casing", () -> PropulsionBlocks.PLATINUM_CASING.get().asItem());
+
         registerSectionItem(MAIN_SECTION, "platinum_fluid_tank", () -> PropulsionBlocks.PLATINUM_FLUID_TANK.get().asItem());
         registerSectionItem(MAIN_SECTION, "platinum_fluid_vessel", () -> PropulsionBlocks.PLATINUM_FLUID_VESSEL.get().asItem());
-        registerSectionItem(MAIN_SECTION, "platinum_ingot", () -> PropulsionItems.PLATINUM_INGOT.get());
-        registerSectionItem(MAIN_SECTION, "platinum_nugget", () -> PropulsionItems.PLATINUM_NUGGET.get());
-        registerSectionItem(MAIN_SECTION, "platinum_sheet", () -> PropulsionItems.PLATINUM_SHEET.get());
-        registerSectionItem(MAIN_SECTION, "raw_platinum", () -> PropulsionItems.RAW_PLATINUM.get());
-        registerSectionItem(MAIN_SECTION, "coral_bucket", () -> PropulsionItems.CORAL_BUCKET.get());
         registerSectionItem(MAIN_SECTION, "oxidizer_bucket", () -> PropulsionItems.OXIDIZER_BUCKET.get());
 
         registerSectionItem(TOOLS_SECTION, "assembler_stick", () -> ModItems.ASSEMBLER_STICK.get());

@@ -8,7 +8,6 @@ import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTank
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankItem;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVesselBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVesselItem;
-import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumCasingBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_converter.RedstoneConverterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster.CreativeVectorThrusterBlock;
@@ -77,21 +76,8 @@ public class PropulsionBlocks {
         () -> new CopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 8));
     public static final DeferredBlock<CopycatWingBlock> COPYCAT_WING_12 = BLOCKS.register("copycat_wing_12",
         () -> new CopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 12));
-    public static final DeferredBlock<Block> PLATINUM_ORE = BLOCKS.register("platinum_ore",
-        () -> new Block(Block.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE)
-            .requiresCorrectToolForDrops().strength(3.0f, 3.0f)));
-    public static final DeferredBlock<Block> DEEPSLATE_PLATINUM_ORE = BLOCKS.register("deepslate_platinum_ore",
-        () -> new Block(Block.Properties.of().mapColor(MapColor.DEEPSLATE).sound(SoundType.DEEPSLATE)
-            .requiresCorrectToolForDrops().strength(4.5f, 3.0f)));
-    public static final DeferredBlock<Block> PLATINUM_BLOCK = BLOCKS.register("platinum_block",
-        () -> new Block(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
-            .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
-    public static final DeferredBlock<Block> RAW_PLATINUM_BLOCK = BLOCKS.register("raw_platinum_block",
-        () -> new Block(Block.Properties.of().mapColor(MapColor.RAW_IRON).sound(SoundType.STONE)
-            .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
-    public static final DeferredBlock<PlatinumCasingBlock> PLATINUM_CASING = BLOCKS.register("platinum_casing",
-        () -> new PlatinumCasingBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
-            .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
+
+
     public static final DeferredBlock<PlatinumFluidTankBlock> PLATINUM_FLUID_TANK = BLOCKS.register("platinum_fluid_tank",
         () -> new PlatinumFluidTankBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion().isRedstoneConductor((s, l, p) -> true)));
@@ -118,11 +104,7 @@ public class PropulsionBlocks {
         BLOCK_ITEMS.register("copycat_wing", () -> new CopycatWingItem(COPYCAT_WING.get(), new BlockItem.Properties()));
         BLOCK_ITEMS.register("copycat_wing_8", () -> new CopycatWingItem(COPYCAT_WING_8.get(), new BlockItem.Properties()));
         BLOCK_ITEMS.register("copycat_wing_12", () -> new CopycatWingItem(COPYCAT_WING_12.get(), new BlockItem.Properties()));
-        registerDefaultBlockItem("platinum_ore", PLATINUM_ORE);
-        registerDefaultBlockItem("deepslate_platinum_ore", DEEPSLATE_PLATINUM_ORE);
-        registerDefaultBlockItem("platinum_block", PLATINUM_BLOCK);
-        registerDefaultBlockItem("raw_platinum_block", RAW_PLATINUM_BLOCK);
-        registerDefaultBlockItem("platinum_casing", PLATINUM_CASING);
+
         BLOCK_ITEMS.register("platinum_fluid_tank", () -> new PlatinumFluidTankItem(PLATINUM_FLUID_TANK.get(), new BlockItem.Properties()));
         BLOCK_ITEMS.register("platinum_fluid_vessel", () -> new PlatinumFluidVesselItem(PLATINUM_FLUID_VESSEL.get(), new BlockItem.Properties()));
 

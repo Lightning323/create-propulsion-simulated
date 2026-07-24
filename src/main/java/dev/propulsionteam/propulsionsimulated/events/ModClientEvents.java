@@ -88,32 +88,6 @@ public class ModClientEvents {
             }
         }, PropulsionFluids.TURPENTINE_TYPE);
 
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            @Override
-            public ResourceLocation getStillTexture() {
-                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/coral_still");
-            }
-
-            @Override
-            public ResourceLocation getFlowingTexture() {
-                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/coral_flow");
-            }
-
-            @Override
-            public int getTintColor() {
-                return 0xFFFFFFFF;
-            }
-
-            @Override
-            public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                return 0xFFFFFFFF;
-            }
-
-            @Override
-            public int getTintColor(FluidStack stack) {
-                return 0xFFFFFFFF;
-            }
-        }, PropulsionFluids.CORAL_TYPE);
 
         event.registerFluidType(new IClientFluidTypeExtensions() {
             @Override
@@ -148,8 +122,6 @@ public class ModClientEvents {
         event.enqueueWork(() -> {
             ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.TURPENTINE.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.FLOWING_TURPENTINE.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.CORAL.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.FLOWING_CORAL.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.OXIDIZER.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.FLOWING_OXIDIZER.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(PropulsionBlocks.PLATINUM_FLUID_TANK.get(), RenderType.cutoutMipped());
@@ -159,7 +131,6 @@ public class ModClientEvents {
         PonderIndex.addPlugin(new DeltaPonderPlugin());
         PropulsionInstanceTypes.register();
 
-        CreateClient.CASING_CONNECTIVITY.makeCasing(PropulsionBlocks.PLATINUM_CASING.get(), PropulsionSpriteShifts.PLATINUM_CASING_TEXTURE);
 
         SimpleBlockEntityVisualizer.builder(PropulsionBlockEntities.STIRLING_ENGINE_BLOCK_ENTITY.get())
             .factory(StirlingEngineVisual::new)
@@ -191,12 +162,11 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
         EncasedCTBehaviour behaviour = new EncasedCTBehaviour(PropulsionSpriteShifts.PLATINUM_CASING_TEXTURE);
-        ModelSwapper.swapModels(event.getModels(),
-            ModelSwapper.getAllBlockStateModelLocations(PropulsionBlocks.PLATINUM_CASING.get()),
-            model -> new CTModel(model, behaviour));
+
         ModelSwapper.swapModels(event.getModels(),
             ModelSwapper.getAllBlockStateModelLocations(PropulsionBlocks.PLATINUM_FLUID_TANK.get()),
             PlatinumFluidTankModel::new);
+
         ModelSwapper.swapModels(event.getModels(),
             ModelSwapper.getAllBlockStateModelLocations(PropulsionBlocks.PLATINUM_FLUID_VESSEL.get()),
             PlatinumFluidVesselModel::new);

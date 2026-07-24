@@ -76,9 +76,6 @@ public class ForgeEvents {
         if (player.tickCount % CORAL_DAMAGE_INTERVAL_TICKS != 0) {
             return;
         }
-        if (!isTouchingCoralFluid(serverLevel, player)) {
-            return;
-        }
         if (hasFullNetheriteDivingProtection(player)) {
             return;
         }
@@ -127,18 +124,7 @@ public class ForgeEvents {
             && NetheriteDivingHandler.isNetheriteArmor(player.getItemBySlot(EquipmentSlot.FEET));
     }
 
-    private static boolean isTouchingCoralFluid(ServerLevel level, Player player) {
-        Vec3 pos = player.position();
-        double midY = player.getBoundingBox().minY + player.getBbHeight() * 0.5;
-        double eyeY = player.getEyeY();
-        return isCoralFluid(level.getFluidState(BlockPos.containing(pos.x, player.getBoundingBox().minY + 0.01, pos.z)))
-            || isCoralFluid(level.getFluidState(BlockPos.containing(pos.x, midY, pos.z)))
-            || isCoralFluid(level.getFluidState(BlockPos.containing(pos.x, eyeY, pos.z)));
-    }
 
-    private static boolean isCoralFluid(FluidState fluidState) {
-        return fluidState.is(PropulsionFluids.CORAL.get()) || fluidState.is(PropulsionFluids.FLOWING_CORAL.get());
-    }
 
     private static DamageSource coralSubmersionDamageSource(ServerLevel level) {
         Holder<DamageType> damageType = level.registryAccess()
