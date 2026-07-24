@@ -1,14 +1,14 @@
 {
     "required": true,
     "minVersion": "0.8.5",
-    "package": "dev.propulsionteam.propulsionsimulated.mixin",
+    "package": "org.lightning323.createkinetic.mixin",
     "compatibilityLevel": "JAVA_17",
     "refmap": "createpropulsion.refmap.json",
-    "plugin": "dev.propulsionteam.propulsionsimulated.mixin.plugin.PropulsionMixinPlugin",
+    "plugin": "org.lightning323.createkinetic.mixin.plugin.PropulsionMixinPlugin",
     "mixins": [
-        "BasinBlockEntityMixin",
-        "FluidShellProjectileMixin",
-        "SchematicPlacePacketMixin"
+      "BasinBlockEntityMixin",
+      "FluidShellProjectileMixin",
+      "SchematicPlacePacketMixin"
     ],
     "client": [],
     "server": [],
