@@ -1,8 +1,0 @@
-{
-  "item": "create:creative_blaze_cake",
-  "thrust_multiplier": 2.0,
-  "consumption_multiplier": 1.0,
-  "burn_ticks": 51840000,
-  "particle": "plasma",
-  "required_mod": "create"
-}

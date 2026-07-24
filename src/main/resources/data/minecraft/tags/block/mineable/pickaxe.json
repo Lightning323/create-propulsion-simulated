@@ -5,7 +5,6 @@
     "createpropulsion:creative_thruster",
     "createpropulsion:ion_thruster",
     "createpropulsion:redstone_transmission",
-    "createpropulsion:solid_burner",
     "createpropulsion:liquid_burner",
     "createpropulsion:stirling_engine",
     "createpropulsion:tilt_adapter",
@@ -15,17 +14,8 @@
     "createpropulsion:copycat_wing",
     "createpropulsion:copycat_wing_8",
     "createpropulsion:copycat_wing_12",
-    "createpropulsion:platinum_ore",
-    "createpropulsion:deepslate_platinum_ore",
-    "createpropulsion:cable",
-    "createpropulsion:cable_hub",
-    "createpropulsion:platinum_block",
-    "createpropulsion:raw_platinum_block",
-    "createpropulsion:coral_generator",
     "createpropulsion:vector_thruster",
     "createpropulsion:creative_vector_thruster",
-    "createpropulsion:liquid_vector_thruster",
-    "createpropulsion:platinum_fluid_tank",
-    "createpropulsion:platinum_fluid_vessel"
+    "createpropulsion:liquid_vector_thruster"
   ]
 }

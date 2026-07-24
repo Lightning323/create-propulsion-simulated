@@ -1,6 +1,0 @@
-{
-  "item": "minecraft:coal",
-  "thrust_multiplier": 1.0,
-  "consumption_multiplier": 0.4,
-  "burn_ticks": 4000
-}
