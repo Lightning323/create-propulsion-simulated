@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.content.wing;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.registries.PropulsionBlocks;
 import com.simibubi.create.foundation.model.ModelSwapper;
 import net.neoforged.api.distmarker.Dist;
@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ModelEvent;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateKinetic.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class CopycatWingModelSwapper {
     @SubscribeEvent
     public static void onModelBake(ModelEvent.ModifyBakingResult event) {

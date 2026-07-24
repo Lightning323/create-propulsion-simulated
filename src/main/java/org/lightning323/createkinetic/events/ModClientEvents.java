@@ -2,7 +2,7 @@ package org.lightning323.createkinetic.events;
 
 import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
 import com.simibubi.create.foundation.model.ModelSwapper;
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.content.heat.burners.liquid.LiquidBurnerRenderer;
 import org.lightning323.createkinetic.content.platinum.PlatinumFluidTankModel;
 import org.lightning323.createkinetic.content.platinum.PlatinumFluidVesselModel;
@@ -44,7 +44,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.fluids.FluidStack;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateKinetic.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModClientEvents {
 
     @SubscribeEvent

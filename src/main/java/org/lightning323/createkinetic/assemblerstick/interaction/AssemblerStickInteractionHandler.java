@@ -13,7 +13,7 @@ import dev.simulated_team.simulated.service.SimConfigService;
 import dev.simulated_team.simulated.util.SimAssemblyHelper;
 import dev.simulated_team.simulated.util.SimMathUtils;
 import dev.simulated_team.simulated.util.assembly.SimAssemblyException;
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.assemblerstick.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,7 +38,7 @@ import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
 
-@EventBusSubscriber(modid = CreatePropulsion.ID)
+@EventBusSubscriber(modid = CreateKinetic.ID)
 public final class AssemblerStickInteractionHandler {
     private static final int COOLDOWN_TICKS = 10;
     private static final int AUTO_GLUE_MAX_BLOCKS = 8192;

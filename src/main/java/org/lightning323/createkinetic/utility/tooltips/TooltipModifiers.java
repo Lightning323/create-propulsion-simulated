@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.PropulsionConfig;
 import org.lightning323.createkinetic.registries.PropulsionBlocks;
 import com.simibubi.create.foundation.item.TooltipHelper;
@@ -46,7 +46,7 @@ public class TooltipModifiers {
     public static boolean apply(Item item, List<Component> tooltipList) {
         Function<SummaryPayload, String> summarySupplier = tooltipModificationLookup.get(item);
         if (summarySupplier != null) {
-            String path = CreatePropulsion.ID + "." + BuiltInRegistries.ITEM.getKey(item).getPath();
+            String path = CreateKinetic.ID + "." + BuiltInRegistries.ITEM.getKey(item).getPath();
             String summary = summarySupplier.apply(new SummaryPayload(item, path));
             tooltipList.addAll(TooltipHelper.cutStringTextComponent(summary, Palette.STANDARD_CREATE));
             return true;

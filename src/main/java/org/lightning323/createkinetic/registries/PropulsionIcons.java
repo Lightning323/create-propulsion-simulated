@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public class PropulsionIcons extends AllIcons {
-    public static final ResourceLocation ICON_ATLAS = ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "textures/gui/icons.png");
+    public static final ResourceLocation ICON_ATLAS = ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "textures/gui/icons.png");
     public static final int ICON_ATLAS_SIZE = 32;
 
     protected int iconX;

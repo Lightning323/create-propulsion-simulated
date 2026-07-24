@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -16,16 +16,16 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class PropulsionFluids {
-    private static final String TURPENTINE_DESCRIPTION = "fluid." + CreatePropulsion.ID + ".turpentine";
+    private static final String TURPENTINE_DESCRIPTION = "fluid." + CreateKinetic.ID + ".turpentine";
 
-    public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreatePropulsion.ID);
-    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, CreatePropulsion.ID);
+    public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreateKinetic.ID);
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, CreateKinetic.ID);
 
     public static final DeferredHolder<FluidType, FluidType> TURPENTINE_TYPE = FLUID_TYPES.register("turpentine_type",
             () -> new FluidType(FluidType.Properties.create().descriptionId(TURPENTINE_DESCRIPTION).density(500).viscosity(1000)));
 
     public static final DeferredHolder<FluidType, FluidType> OXIDIZER_TYPE = FLUID_TYPES.register("oxidizer_type",
-            () -> new FluidType(FluidType.Properties.create().descriptionId("fluid." + CreatePropulsion.ID + ".oxidizer").density(700).viscosity(500)));
+            () -> new FluidType(FluidType.Properties.create().descriptionId("fluid." + CreateKinetic.ID + ".oxidizer").density(700).viscosity(500)));
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TURPENTINE = FLUIDS.register("turpentine",
             () -> new ProtectedFlowingFluid.Source(turpentineProperties()));

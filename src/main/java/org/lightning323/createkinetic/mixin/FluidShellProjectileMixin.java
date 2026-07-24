@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.mixin;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.mixin.plugin.MixinIf;
 import net.minecraft.core.Position;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 @Mixin(targets = "rbasamoyai.createbigcannons.munitions.big_cannon.fluid_shell.FluidShellProjectile")
 @MixinIf("is_createbigcannons_loaded")
 public abstract class FluidShellProjectileMixin {
-    private static final ResourceLocation CORAL_ID = ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "coral");
+    private static final ResourceLocation CORAL_ID = ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "coral");
     private static final float TNT_POWER = 4.0f;
     private static final float CORAL_MB_PER_TNT = 500.0f;
 

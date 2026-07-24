@@ -12,22 +12,15 @@ import com.simibubi.create.compat.Mods;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import org.lightning323.createkinetic.registries.*;
 
-@Mod(CreatePropulsion.ID)
-public class CreatePropulsion {
+@Mod(CreateKinetic.ID)
+public class CreateKinetic {
     public static final String ID = "createkinetic";
-    private static final String INCOMPATIBLE_MOD_ID = "createpropulsionsimulated";
 
-    public CreatePropulsion(IEventBus modBus, ModContainer modContainer) {
-        if (ModList.get().isLoaded(INCOMPATIBLE_MOD_ID)) {
-            throw new IllegalStateException(
-                    "Create: Propulsion is incompatible with createpropulsionsimulated. "
-                            + "Both mods provide the same features and cannot be loaded together.");
-        }
+    public CreateKinetic(IEventBus modBus, ModContainer modContainer) {
         modBus.addListener(ModCapabilityEvents::registerCapabilities);
         modBus.addListener(ModSetupEvents::onCommonSetup);
         //Content

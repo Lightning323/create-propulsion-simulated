@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -10,11 +10,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class PropulsionSoundEvents {
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS =
-        DeferredRegister.create(Registries.SOUND_EVENT, CreatePropulsion.ID);
+        DeferredRegister.create(Registries.SOUND_EVENT, CreateKinetic.ID);
 
     public static final DeferredHolder<SoundEvent, SoundEvent> THRUSTER_LOOP = SOUND_EVENTS.register(
         "thruster_loop",
-        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "thruster_loop"))
+        () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "thruster_loop"))
     );
 
     public static void register(IEventBus modBus) {

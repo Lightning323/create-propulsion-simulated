@@ -1,7 +1,7 @@
 package org.lightning323.createkinetic.events;
 
 import com.simibubi.create.content.equipment.armor.NetheriteDivingHandler;
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.network.PropulsionPackets;
 import org.lightning323.createkinetic.network.SyncThrusterFuelsPacket;
 import org.lightning323.createkinetic.content.thruster.SolidThrusterFuelManager;
@@ -34,11 +34,11 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = CreateKinetic.ID, bus = EventBusSubscriber.Bus.GAME)
 public class ForgeEvents {
     private static final ResourceKey<DamageType> CORAL_SUBMERSION_DAMAGE_TYPE = ResourceKey.create(
         Registries.DAMAGE_TYPE,
-        ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "coral_submersion")
+        ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "coral_submersion")
     );
     private static final int CORAL_DAMAGE_INTERVAL_TICKS = 20;
     private static final float CORAL_DAMAGE_AMOUNT = 8.0f;

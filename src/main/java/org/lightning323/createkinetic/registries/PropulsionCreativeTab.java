@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.assemblerstick.item.ModItems;
 import dev.simulated_team.simulated.registrate.SimulatedRegistrate;
 import net.minecraft.resources.ResourceLocation;
@@ -8,8 +8,8 @@ import net.minecraft.world.item.Item;
 import java.util.function.Supplier;
 
 public class PropulsionCreativeTab {
-    private static final ResourceLocation MAIN_SECTION = ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "propulsion_main");
-    private static final ResourceLocation TOOLS_SECTION = ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "propulsion_tools");
+    private static final ResourceLocation MAIN_SECTION = ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "propulsion_main");
+    private static final ResourceLocation TOOLS_SECTION = ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "propulsion_tools");
     private static boolean sectionsInitialized = false;
 
     public static synchronized void registerAeronauticsSections() {
@@ -48,6 +48,6 @@ public class PropulsionCreativeTab {
 
     private static void registerSectionItem(ResourceLocation sectionId, String itemPath, Supplier<Item> itemSupplier) {
         SimulatedRegistrate.TAB_ITEMS.add(itemSupplier);
-        SimulatedRegistrate.ITEM_TO_SECTION.put(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, itemPath), sectionId);
+        SimulatedRegistrate.ITEM_TO_SECTION.put(ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, itemPath), sectionId);
     }
 }

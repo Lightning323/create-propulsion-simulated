@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.client.tooltip;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = CreatePropulsion.ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateKinetic.ID, value = Dist.CLIENT)
 public final class TooltipHandler {
     private static final List<ITooltipProvider> TOP_PROVIDERS = new ArrayList<>();
 

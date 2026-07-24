@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.events;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.content.thruster.vector_thruster.VectorRedstoneLinkRenderer;
 import org.lightning323.createkinetic.utility.value_boxes.DualRowValueRenderer;
 
@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateKinetic.ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ForgeClientEvents {
 
     @SubscribeEvent
@@ -46,6 +46,6 @@ public class ForgeClientEvents {
 
     private static void openConfig() {
         Screen parent = Minecraft.getInstance().screen;
-        ScreenOpener.open(new BaseConfigScreen(parent, CreatePropulsion.ID));
+        ScreenOpener.open(new BaseConfigScreen(parent, CreateKinetic.ID));
     }
 }

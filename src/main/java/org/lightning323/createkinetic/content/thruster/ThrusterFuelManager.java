@@ -7,12 +7,13 @@ import java.util.Map;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+
+import org.lightning323.createkinetic.CreateKinetic;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.lightning323.createkinetic.CreatePropulsion;
 import org.lightning323.createkinetic.PropulsionConfig;
 import org.lightning323.createkinetic.network.PropulsionPackets;
 import com.simibubi.create.foundation.fluid.FluidHelper;
@@ -110,7 +111,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(@Nonnull Map<ResourceLocation, JsonElement> pObject, @Nonnull ResourceManager resourceManager, @Nonnull ProfilerFiller profiler) {
         //Parse datapacks
-        profiler.push(CreatePropulsion.ID + ":Loading_thruster_fuels");
+        profiler.push(CreateKinetic.ID + ":Loading_thruster_fuels");
         cachedThrusterFuelDatapack = new HashMap<>(pObject);
         ParseResult parseResult = parseFuelProperties(cachedThrusterFuelDatapack);
         fuelPropertiesMap = parseResult.fuelMap();
@@ -146,7 +147,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
 
     public static boolean registerScriptedFuel(String fluidId, Map<String, Object> settings) {
         if (settings == null) {
-            LOGGER.warn("[{}] KubeJS fuel registration failed: settings object is null for '{}'.", CreatePropulsion.ID, fluidId);
+            LOGGER.warn("[{}] KubeJS fuel registration failed: settings object is null for '{}'.", CreateKinetic.ID, fluidId);
             return false;
         }
 
@@ -159,7 +160,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
 
         ResourceLocation fluidLocation = ResourceLocation.tryParse(fluidId);
         if (fluidLocation == null) {
-            LOGGER.warn("[{}] KubeJS fuel registration failed: invalid fluid id '{}'.", CreatePropulsion.ID, fluidId);
+            LOGGER.warn("[{}] KubeJS fuel registration failed: invalid fluid id '{}'.", CreateKinetic.ID, fluidId);
             return false;
         }
         return registerScriptedFuelInternal(
@@ -180,7 +181,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
     public static boolean removeFuel(String fuelIdToRemove) {
         ResourceLocation fluidLocation = ResourceLocation.tryParse(fuelIdToRemove);
         if (fluidLocation == null) {
-            LOGGER.warn("[{}] KubeJS fuel removal failed: invalid fluid id '{}'.", CreatePropulsion.ID, fuelIdToRemove);
+            LOGGER.warn("[{}] KubeJS fuel removal failed: invalid fluid id '{}'.", CreateKinetic.ID, fuelIdToRemove);
             return false;
         }
         removedFuelIds.add(fluidLocation);
@@ -221,7 +222,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
 
             //Parse fuel def
             ThrusterFuelDefinition.CODEC.parse(JsonOps.INSTANCE, json)
-                .resultOrPartial(error -> {LOGGER.error("[{}] Failed to parse thruster fuel definition from {}: {}", CreatePropulsion.ID, file, error);})
+                .resultOrPartial(error -> {LOGGER.error("[{}] Failed to parse thruster fuel definition from {}: {}", CreateKinetic.ID, file, error);})
                 .ifPresent(definition -> {
                     //There is a fuel that requires a mod but the mod is not present
                     if (definition.requiredMod().isPresent() && !ModList.get().isLoaded(definition.requiredMod().get())) {
@@ -338,7 +339,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         for (ResourceLocation fluidId : consumptionOverrides.keySet()) {
             Fluid fluid = BuiltInRegistries.FLUID.get(fluidId);
             if (fluid == null || fluid == Fluids.EMPTY) {
-                LOGGER.warn("[{}] Ignoring fuel config override for '{}': fluid is not registered.", CreatePropulsion.ID, fluidId);
+                LOGGER.warn("[{}] Ignoring fuel config override for '{}': fluid is not registered.", CreateKinetic.ID, fluidId);
                 missingConfigFluidIds++;
                 continue;
             }
@@ -378,7 +379,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         int removedEntries = removedFuelIds.size();
         LOGGER.info(
             "[{}] Thruster fuel reload ({}) complete: datapackParsed={}, datapackSkippedMissingMod={}, datapackSkippedMissingFluid={}, configAdded={}, configOverridden={}, configMissingFluid={}, mergedDatapackAndConfig={}, scriptedOverrides={}, removed={}",
-            CreatePropulsion.ID,
+            CreateKinetic.ID,
             context,
             parseResult.parsedEntries(),
             parseResult.skippedMissingModEntries(),
@@ -486,7 +487,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
     private static boolean registerScriptedFuelInternal(ResourceLocation fluidId, float thrustMultiplier, float consumptionMultiplier, String particleName, List<String> overrideTextureIds, Integer overrideColor, boolean useFluidColor) {
         Fluid fluid = FluidHelper.convertToStill(BuiltInRegistries.FLUID.get(fluidId));
         if (fluid == null || fluid == Fluids.EMPTY) {
-            LOGGER.warn("[{}] KubeJS fuel registration failed: fluid '{}' is not registered.", CreatePropulsion.ID, fluidId);
+            LOGGER.warn("[{}] KubeJS fuel registration failed: fluid '{}' is not registered.", CreateKinetic.ID, fluidId);
             return false;
         }
         ThrusterParticleType particleType = ThrusterParticleType.fromString(particleName);

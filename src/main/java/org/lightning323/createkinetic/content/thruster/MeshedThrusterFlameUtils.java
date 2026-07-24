@@ -3,7 +3,7 @@ package org.lightning323.createkinetic.content.thruster;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.PropulsionConfig;
 import org.lightning323.createkinetic.content.thruster.thruster.ThrusterBlock;
 import org.lightning323.createkinetic.content.thruster.vector_thruster.VectorThrusterBlockEntity;
@@ -27,7 +27,7 @@ import java.lang.Math;
 
 public class MeshedThrusterFlameUtils {
 
-    public static final ResourceLocation THRUSTER_FLAME_SHADER = CreatePropulsion.loc("thruster_flame");
+    public static final ResourceLocation THRUSTER_FLAME_SHADER = CreateKinetic.loc("thruster_flame");
     //            ResourceLocation.fromNamespaceAndPath("aeronautics", "burner_flame");
     private static final float FLAME_SIZE = 2f;
     private static final float BLOCK_PIXEL = 1f / 16f;

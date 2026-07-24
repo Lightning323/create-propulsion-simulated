@@ -1,13 +1,13 @@
 package org.lightning323.createkinetic.assemblerstick.item;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public final class ModItems {
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePropulsion.ID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreateKinetic.ID);
 
     public static final DeferredHolder<Item, AssemblerStickItem> ASSEMBLER_STICK = ITEMS.register("assembler_stick",
             () -> new AssemblerStickItem(new Item.Properties().stacksTo(1)));

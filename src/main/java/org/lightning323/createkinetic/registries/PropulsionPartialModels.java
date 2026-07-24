@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.resources.ResourceLocation;
@@ -52,7 +52,7 @@ public class PropulsionPartialModels {
     public static final PartialModel TRANSMISSION_MINUS = partial("transmission_minus");
 
     private static PartialModel partial(String path) {
-        return PartialModel.of(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "partial/" + path));
+        return PartialModel.of(ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "partial/" + path));
     }
 
     public static void register() {}

@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 //import dev.propulsionteam.propulsionsimulated.content.cable.CableSpoolItem;
 import org.lightning323.createkinetic.utility.BurnableItem;
 
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class PropulsionItems {
-    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePropulsion.ID);
+    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreateKinetic.ID);
 
     public static final DeferredHolder<Item, BurnableItem> PINE_RESIN =
         ITEMS.register("pine_resin", () -> new BurnableItem(new Item.Properties(), 1200));

@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.lightning323.createkinetic.CreateKinetic;
 import org.slf4j.Logger;
 
 import com.google.gson.Gson;
@@ -20,7 +21,6 @@ import com.google.gson.JsonElement;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
-import org.lightning323.createkinetic.CreatePropulsion;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -141,7 +141,7 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(@Nonnull Map<ResourceLocation, JsonElement> object, @Nonnull ResourceManager resourceManager, @Nonnull ProfilerFiller profiler) {
-        profiler.push(CreatePropulsion.ID + ":loading_solid_thruster_fuels");
+        profiler.push(CreateKinetic.ID + ":loading_solid_thruster_fuels");
         cachedDatapack = new HashMap<>(object);
         ParseResult result = parseFuelProperties(cachedDatapack);
         fuelPropertiesMap = result.itemMap();
@@ -173,12 +173,12 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
 
     public static boolean registerScriptedFuel(String itemId, Map<String, Object> settings) {
         if (settings == null) {
-            LOGGER.warn("[{}] KubeJS solid fuel registration failed: settings null for '{}'.", CreatePropulsion.ID, itemId);
+            LOGGER.warn("[{}] KubeJS solid fuel registration failed: settings null for '{}'.", CreateKinetic.ID, itemId);
             return false;
         }
         ResourceLocation itemLocation = ResourceLocation.tryParse(itemId);
         if (itemLocation == null) {
-            LOGGER.warn("[{}] KubeJS solid fuel registration failed: invalid item id '{}'.", CreatePropulsion.ID, itemId);
+            LOGGER.warn("[{}] KubeJS solid fuel registration failed: invalid item id '{}'.", CreateKinetic.ID, itemId);
             return false;
         }
         return registerScriptedFuelInternal(
@@ -199,7 +199,7 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
     public static boolean removeFuel(String fuelId) {
         ResourceLocation itemLocation = ResourceLocation.tryParse(fuelId);
         if (itemLocation == null) {
-            LOGGER.warn("[{}] KubeJS solid fuel removal failed: invalid item id '{}'.", CreatePropulsion.ID, fuelId);
+            LOGGER.warn("[{}] KubeJS solid fuel removal failed: invalid item id '{}'.", CreateKinetic.ID, fuelId);
             return false;
         }
         removedFuelIds.add(itemLocation);
@@ -233,13 +233,13 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
         for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
             ResourceLocation file = entry.getKey();
             SolidThrusterFuelDefinition.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
-                .resultOrPartial(err -> LOGGER.error("[{}] Failed to parse solid thruster fuel {}: {}", CreatePropulsion.ID, file, err))
+                .resultOrPartial(err -> LOGGER.error("[{}] Failed to parse solid thruster fuel {}: {}", CreateKinetic.ID, file, err))
                 .ifPresent(definition -> {
                     if (definition.requiredMod().isPresent() && !ModList.get().isLoaded(definition.requiredMod().get())) {
                         return;
                     }
                     if (definition.itemId().isPresent() == definition.itemTagId().isPresent()) {
-                        LOGGER.error("[{}] Solid thruster fuel {} must define exactly one of 'item' or 'item_tag'.", CreatePropulsion.ID, file);
+                        LOGGER.error("[{}] Solid thruster fuel {} must define exactly one of 'item' or 'item_tag'.", CreateKinetic.ID, file);
                         return;
                     }
                     ItemThrusterProperties properties = toProperties(definition);
@@ -313,7 +313,7 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
     private static void logReloadSummary(String context, ParseResult result) {
         LOGGER.info(
             "[{}] Solid thruster fuel reload ({}) complete: items={}, tags={}, mergedItems={}, scripted={}, removed={}",
-            CreatePropulsion.ID,
+            CreateKinetic.ID,
             context,
             result.itemMap().size(),
             result.tagEntries().size(),
@@ -331,7 +331,7 @@ public class SolidThrusterFuelManager extends SimpleJsonResourceReloadListener {
                                                         String particleName, List<String> overrideTextureIds, Integer overrideColor, boolean useItemColor) {
         Item item = BuiltInRegistries.ITEM.get(itemId);
         if (item == null || item == Items.AIR) {
-            LOGGER.warn("[{}] KubeJS solid fuel registration failed: item '{}' is not registered.", CreatePropulsion.ID, itemId);
+            LOGGER.warn("[{}] KubeJS solid fuel registration failed: item '{}' is not registered.", CreateKinetic.ID, itemId);
             return false;
         }
         ThrusterParticleType particleType = ThrusterParticleType.fromString(particleName);

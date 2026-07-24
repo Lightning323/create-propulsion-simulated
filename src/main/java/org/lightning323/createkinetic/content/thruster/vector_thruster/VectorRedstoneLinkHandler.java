@@ -3,7 +3,7 @@ package org.lightning323.createkinetic.content.thruster.vector_thruster;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.RaycastHelper;
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,7 +23,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-@EventBusSubscriber(modid = CreatePropulsion.ID)
+@EventBusSubscriber(modid = CreateKinetic.ID)
 public class VectorRedstoneLinkHandler {
 
     @SuppressWarnings("unchecked")

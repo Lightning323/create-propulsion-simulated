@@ -2,7 +2,7 @@ package org.lightning323.createkinetic.utility;
 
 import java.util.Locale;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
@@ -13,7 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ModelEvent;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateKinetic.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class Bakery {
     public static final BakedModel[] BAKED_COMPASS_MODELS = new BakedModel[32];
     public static final ModelResourceLocation[] COMPASS_MODELS = new ModelResourceLocation[32];

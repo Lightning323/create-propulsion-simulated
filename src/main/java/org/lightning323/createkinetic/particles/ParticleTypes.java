@@ -2,7 +2,7 @@ package org.lightning323.createkinetic.particles;
 
 import java.util.function.Supplier;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.particles.plasma.PlasmaParticleData;
 import org.lightning323.createkinetic.particles.plume.PlumeParticleData;
 import org.lightning323.createkinetic.particles.ion.IonParticleData;
@@ -22,7 +22,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = CreatePropulsion.ID, bus = Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateKinetic.ID, bus = Bus.MOD, value = Dist.CLIENT)
 public enum ParticleTypes {
     PLUME(PlumeParticleData::new),
     PLASMA(PlasmaParticleData::new),
@@ -62,7 +62,7 @@ public enum ParticleTypes {
     }
 
     private static class ParticleEntry<D extends ParticleOptions> {
-        private static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(Registries.PARTICLE_TYPE, CreatePropulsion.ID);
+        private static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(Registries.PARTICLE_TYPE, CreateKinetic.ID);
         private final String name;
         private final Supplier<? extends ICustomParticleData<D>> typeFactory;
         private final DeferredHolder<ParticleType<?>, ParticleType<D>> object;

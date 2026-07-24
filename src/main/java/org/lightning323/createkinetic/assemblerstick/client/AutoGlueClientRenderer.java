@@ -8,7 +8,7 @@ import dev.simulated_team.simulated.index.SimSpecialTextures;
 import dev.simulated_team.simulated.mixin.aabb.AABBMixin;
 import dev.simulated_team.simulated.service.SimConfigService;
 import dev.simulated_team.simulated.util.SimColors;
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.assemblerstick.item.ModItems;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-@EventBusSubscriber(modid = CreatePropulsion.ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CreateKinetic.ID, value = Dist.CLIENT)
 public final class AutoGlueClientRenderer {
     private AutoGlueClientRenderer() {
     }

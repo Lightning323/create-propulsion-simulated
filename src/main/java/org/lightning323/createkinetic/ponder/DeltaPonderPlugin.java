@@ -2,7 +2,7 @@ package org.lightning323.createkinetic.ponder;
 
 import javax.annotation.Nonnull;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.registries.PropulsionBlocks;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 
@@ -39,7 +39,7 @@ public class DeltaPonderPlugin implements PonderPlugin {
 
     @Override
 	public String getModId() {
-		return CreatePropulsion.ID;
+		return CreateKinetic.ID;
 	}
 
 	@Override

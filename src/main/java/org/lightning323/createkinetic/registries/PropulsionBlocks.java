@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.content.heat.burners.liquid.LiquidBurnerBlock;
 import org.lightning323.createkinetic.content.heat.burners.solid.SolidBurnerBlock;
 import org.lightning323.createkinetic.content.heat.engine.StirlingEngineBlock;
@@ -29,8 +29,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 
 public class PropulsionBlocks {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePropulsion.ID);
-    public static final DeferredRegister.Items BLOCK_ITEMS = DeferredRegister.createItems(CreatePropulsion.ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreateKinetic.ID);
+    public static final DeferredRegister.Items BLOCK_ITEMS = DeferredRegister.createItems(CreateKinetic.ID);
 
     public static final DeferredBlock<ThrusterBlock> THRUSTER_BLOCK = BLOCKS.register("thruster",
         () -> new ThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
@@ -109,9 +109,9 @@ public class PropulsionBlocks {
         BLOCK_ITEMS.register("platinum_fluid_vessel", () -> new PlatinumFluidVesselItem(PLATINUM_FLUID_VESSEL.get(), new BlockItem.Properties()));
 
 
-        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "redstone_transmission"), 0, false);
-        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "tilt_adapter"), 0, false);
-        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "advanced_tilt_adapter"), 0, false);
+        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "redstone_transmission"), 0, false);
+        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "tilt_adapter"), 0, false);
+        PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "advanced_tilt_adapter"), 0, false);
     }
 
     private static <T extends Block> void registerDefaultBlockItem(String name, DeferredBlock<T> block) {

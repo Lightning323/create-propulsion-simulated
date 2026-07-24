@@ -13,7 +13,7 @@ import org.lightning323.createkinetic.content.thruster.vector_thruster.VectorThr
 import org.lightning323.createkinetic.content.thruster.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import org.lightning323.createkinetic.content.redstone_converter.RedstoneConverterBlockEntity;
 import org.lightning323.createkinetic.content.wing.PropulsionCopycatWingBlockEntity;
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,7 +23,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class PropulsionBlockEntities {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
-        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePropulsion.ID);
+        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreateKinetic.ID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThrusterBlockEntity>> THRUSTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("thruster_block_entity",

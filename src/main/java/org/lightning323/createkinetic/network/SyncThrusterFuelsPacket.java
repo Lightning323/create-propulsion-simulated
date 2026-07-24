@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import org.lightning323.createkinetic.content.thruster.FluidThrusterProperties;
 import org.lightning323.createkinetic.content.thruster.ThrusterFuelManager;
 
@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
 public class SyncThrusterFuelsPacket implements CustomPacketPayload {
-    public static final Type<SyncThrusterFuelsPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "sync_thruster_fuels"));
+    public static final Type<SyncThrusterFuelsPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "sync_thruster_fuels"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncThrusterFuelsPacket> STREAM_CODEC = StreamCodec.of(
         (buf, payload) -> payload.encode(buf),
         buf -> SyncThrusterFuelsPacket.decode(buf)

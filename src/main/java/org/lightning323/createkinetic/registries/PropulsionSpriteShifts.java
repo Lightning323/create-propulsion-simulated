@@ -1,6 +1,6 @@
 package org.lightning323.createkinetic.registries;
 
-import org.lightning323.createkinetic.CreatePropulsion;
+import org.lightning323.createkinetic.CreateKinetic;
 import com.simibubi.create.foundation.block.connected.AllCTTypes;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.CTSpriteShifter;
@@ -21,8 +21,8 @@ public class PropulsionSpriteShifts {
 
     private static CTSpriteShiftEntry getCT(CTType type, String blockTextureName) {
         return CTSpriteShifter.getCT(type,
-            ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/" + blockTextureName),
-            ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/" + blockTextureName + "_connected")
+            ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "block/" + blockTextureName),
+            ResourceLocation.fromNamespaceAndPath(CreateKinetic.ID, "block/" + blockTextureName + "_connected")
         );
     }
 }
