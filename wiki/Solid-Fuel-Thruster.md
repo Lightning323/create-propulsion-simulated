@@ -137,7 +137,7 @@ Tag example:
 | `plasma` | Plasma-style exhaust |
 | `none` | No particles for this fuel |
 
-### Default pack (`createpropulsion`)
+### Default pack (`createkinetic`)
 
 **`data/createpropulsion/solid_thruster_fuels/minecraft/`**
 

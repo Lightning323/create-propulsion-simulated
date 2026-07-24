@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "createpropulsion:copycat_wing",
-    "createpropulsion:copycat_wing_8",
-    "createpropulsion:redstone_converter"
+    "createkinetic:copycat_wing",
+    "createkinetic:copycat_wing_8",
+    "createkinetic:redstone_converter"
   ]
 }

@@ -1,18 +1,18 @@
 {
   "replace": false,
   "values": [
-    "createpropulsion:thruster",
-    "createpropulsion:solid_burner",
-    "createpropulsion:liquid_burner",
-    "createpropulsion:stirling_engine",
-    "createpropulsion:vector_thruster",
-    "createpropulsion:creative_vector_thruster",
-    "createpropulsion:liquid_vector_thruster",
-    "createpropulsion:platinum_ore",
-    "createpropulsion:deepslate_platinum_ore",
-    "createpropulsion:platinum_block",
-    "createpropulsion:raw_platinum_block",
-    "createpropulsion:coral_generator",
-    "createpropulsion:advanced_tilt_adapter"
+    "createkinetic:thruster",
+    "createkinetic:solid_burner",
+    "createkinetic:liquid_burner",
+    "createkinetic:stirling_engine",
+    "createkinetic:vector_thruster",
+    "createkinetic:creative_vector_thruster",
+    "createkinetic:liquid_vector_thruster",
+    "createkinetic:platinum_ore",
+    "createkinetic:deepslate_platinum_ore",
+    "createkinetic:platinum_block",
+    "createkinetic:raw_platinum_block",
+    "createkinetic:coral_generator",
+    "createkinetic:advanced_tilt_adapter"
   ]
 }

@@ -1,21 +1,21 @@
 {
   "replace": false,
   "values": [
-    "createpropulsion:thruster",
-    "createpropulsion:creative_thruster",
-    "createpropulsion:ion_thruster",
-    "createpropulsion:redstone_transmission",
-    "createpropulsion:liquid_burner",
-    "createpropulsion:stirling_engine",
-    "createpropulsion:tilt_adapter",
-    "createpropulsion:advanced_tilt_adapter",
-    "createpropulsion:wing",
-    "createpropulsion:tempered_wing",
-    "createpropulsion:copycat_wing",
-    "createpropulsion:copycat_wing_8",
-    "createpropulsion:copycat_wing_12",
-    "createpropulsion:vector_thruster",
-    "createpropulsion:creative_vector_thruster",
-    "createpropulsion:liquid_vector_thruster"
+    "createkinetic:thruster",
+    "createkinetic:creative_thruster",
+    "createkinetic:ion_thruster",
+    "createkinetic:redstone_transmission",
+    "createkinetic:liquid_burner",
+    "createkinetic:stirling_engine",
+    "createkinetic:tilt_adapter",
+    "createkinetic:advanced_tilt_adapter",
+    "createkinetic:wing",
+    "createkinetic:tempered_wing",
+    "createkinetic:copycat_wing",
+    "createkinetic:copycat_wing_8",
+    "createkinetic:copycat_wing_12",
+    "createkinetic:vector_thruster",
+    "createkinetic:creative_vector_thruster",
+    "createkinetic:liquid_vector_thruster"
   ]
 }

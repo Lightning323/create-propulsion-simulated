@@ -1,10 +1,10 @@
 {
   "replace": false,
   "values": [
-    "createpropulsion:wing",
-    "createpropulsion:tempered_wing",
-    "createpropulsion:copycat_wing",
-    "createpropulsion:copycat_wing_8",
-    "createpropulsion:copycat_wing_12"
+    "createkinetic:wing",
+    "createkinetic:tempered_wing",
+    "createkinetic:copycat_wing",
+    "createkinetic:copycat_wing_8",
+    "createkinetic:copycat_wing_12"
   ]
 }

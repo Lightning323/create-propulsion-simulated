@@ -1,8 +1,0 @@
-{
-	"render_type": "minecraft:cutout",
-	"parent": "createpropulsion:block/redstone_converter/block",
-	"textures": {
-		"1": "createpropulsion:block/redstone_converter_on",
-		"particle": "createpropulsion:block/redstone_converter_on"
-	}
-}

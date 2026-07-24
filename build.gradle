@@ -141,6 +141,7 @@ dependencies {
         exclude group: "dev.ftb.mods", module: "ftb-chunks-neoforge"
         exclude group: "dev.ftb.mods", module: "ftb-teams-neoforge"
         exclude group: "dev.ftb.mods", module: "ftb-library-neoforge"
+        exclude group: "maven.modrinth", module: "journeymap"
         exclude group: "info.journeymap", module: "journeymap-api-neoforge"
         exclude group: "dev.architectury", module: "architectury-neoforge"
     }

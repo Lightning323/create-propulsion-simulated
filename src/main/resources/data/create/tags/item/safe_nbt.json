@@ -1,11 +1,11 @@
 {
   "replace": false,
   "values": [
-    "createpropulsion:redstone_converter",
-    "createpropulsion:redstone_transmission",
-    "createpropulsion:tilt_adapter",
-    "createpropulsion:advanced_tilt_adapter",
-    "createpropulsion:platinum_fluid_tank",
-    "createpropulsion:platinum_fluid_vessel"
+    "createkinetic:redstone_converter",
+    "createkinetic:redstone_transmission",
+    "createkinetic:tilt_adapter",
+    "createkinetic:advanced_tilt_adapter",
+    "createkinetic:platinum_fluid_tank",
+    "createkinetic:platinum_fluid_vessel"
   ]
 }

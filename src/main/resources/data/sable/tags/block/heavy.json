@@ -1,10 +1,10 @@
 {
   "replace": false,
   "values": [
-    "createpropulsion:thruster",
-    "createpropulsion:creative_thruster",
-    "createpropulsion:ion_thruster",
-    "createpropulsion:vector_thruster",
-    "createpropulsion:creative_vector_thruster"
+    "createkinetic:thruster",
+    "createkinetic:creative_thruster",
+    "createkinetic:ion_thruster",
+    "createkinetic:vector_thruster",
+    "createkinetic:creative_vector_thruster"
   ]
 }

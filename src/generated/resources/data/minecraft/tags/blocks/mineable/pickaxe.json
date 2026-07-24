@@ -1,17 +1,17 @@
 {
   "values": [
-    "createpropulsion:thruster",
-    "createpropulsion:redstone_transmission",
-    "createpropulsion:hot_air_burner",
-    "createpropulsion:hot_air_pump",
-    "createpropulsion:solid_burner",
-    "createpropulsion:liquid_burner",
-    "createpropulsion:propeller",
-    "createpropulsion:stirling_engine",
-    "createpropulsion:wing",
-    "createpropulsion:tempered_wing",
-    "createpropulsion:copycat_wing",
-    "createpropulsion:copycat_wing_8",
-    "createpropulsion:copycat_wing_12"
+    "createkinetic:thruster",
+    "createkinetic:redstone_transmission",
+    "createkinetic:hot_air_burner",
+    "createkinetic:hot_air_pump",
+    "createkinetic:solid_burner",
+    "createkinetic:liquid_burner",
+    "createkinetic:propeller",
+    "createkinetic:stirling_engine",
+    "createkinetic:wing",
+    "createkinetic:tempered_wing",
+    "createkinetic:copycat_wing",
+    "createkinetic:copycat_wing_8",
+    "createkinetic:copycat_wing_12"
   ]
 }

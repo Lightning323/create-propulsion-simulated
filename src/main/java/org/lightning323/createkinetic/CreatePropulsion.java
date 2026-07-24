@@ -19,7 +19,7 @@ import org.lightning323.createkinetic.registries.*;
 
 @Mod(CreatePropulsion.ID)
 public class CreatePropulsion {
-    public static final String ID = "createpropulsion";
+    public static final String ID = "createkinetic";
     private static final String INCOMPATIBLE_MOD_ID = "createpropulsionsimulated";
 
     public CreatePropulsion(IEventBus modBus, ModContainer modContainer) {

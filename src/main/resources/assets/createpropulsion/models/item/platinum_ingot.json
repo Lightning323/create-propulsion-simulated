@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "createpropulsion:item/platinum_ingot"
-  }
-}
-
