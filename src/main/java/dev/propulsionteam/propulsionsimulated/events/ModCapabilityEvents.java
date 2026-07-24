@@ -3,7 +3,6 @@ package dev.propulsionteam.propulsionsimulated.events;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
-import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
@@ -44,11 +43,7 @@ public class ModCapabilityEvents {
             PropulsionBlockEntities.ION_THRUSTER_BLOCK_ENTITY.get(),
             (be, side) -> ((IonThrusterBlockEntity) be).getEnergyHandler(side)
         );
-        event.registerBlockEntity(
-            Capabilities.FluidHandler.BLOCK,
-            PropulsionBlockEntities.CORAL_GENERATOR_BLOCK_ENTITY.get(),
-            (be, side) -> ((CoralGeneratorBlockEntity) be).getFluidHandler(side)
-        );
+
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,
             PropulsionBlockEntities.PLATINUM_FLUID_TANK_BLOCK_ENTITY.get(),
@@ -59,11 +54,7 @@ public class ModCapabilityEvents {
             PropulsionBlockEntities.PLATINUM_FLUID_VESSEL_BLOCK_ENTITY.get(),
             (be, side) -> be.getCapabilityHandler()
         );
-        event.registerBlockEntity(
-            Capabilities.EnergyStorage.BLOCK,
-            PropulsionBlockEntities.CORAL_GENERATOR_BLOCK_ENTITY.get(),
-            (be, side) -> ((CoralGeneratorBlockEntity) be).getEnergyHandler(side)
-        );
+
         registerComputerCraftCapabilitiesIfAvailable(event);
     }
 
@@ -108,11 +99,6 @@ public class ModCapabilityEvents {
                 (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
             );
 
-            event.registerBlockEntity(
-                capability,
-                PropulsionBlockEntities.CORAL_GENERATOR_BLOCK_ENTITY.get(),
-                (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
-            );
         } catch (Throwable ignored) {
             // ComputerCraft not installed or API unavailable.
         }

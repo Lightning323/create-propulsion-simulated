@@ -2,7 +2,6 @@ package dev.propulsionteam.propulsionsimulated.events;
 
 import com.simibubi.create.content.equipment.armor.NetheriteDivingHandler;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
-import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorFuelManager;
 import dev.propulsionteam.propulsionsimulated.network.PropulsionPackets;
 import dev.propulsionteam.propulsionsimulated.network.SyncThrusterFuelsPacket;
 import dev.propulsionteam.propulsionsimulated.content.thruster.SolidThrusterFuelManager;
@@ -55,7 +54,6 @@ public class ForgeEvents {
     public static void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new ThrusterFuelManager());
         event.addListener(new SolidThrusterFuelManager());
-        event.addListener(new CoralGeneratorFuelManager());
     }
 
     @SubscribeEvent
